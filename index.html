@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Governance Barometer Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky roll-up column on the left (overall score + five pillar bars), pillar tabs and indicator cards on the right; stacks on phones. French is the main line, Malagasy sits below it in italic. */
+:root{
+  --bg:#EEF2F0; --surface:#FFFFFF; --ink:#12211C; --muted:#5A6B65; --line:#D5DDD9;
+  --accent:#0E6B52; --accent-ink:#FFFFFF; --soft:#E3EBE7;
+  --b1:#B3261E; --b2:#C8651B; --b3:#A88C0C; --b4:#5E9B3A; --b5:#0E7A5A;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1714; --surface:#15221E; --ink:#E6EFEB; --muted:#93A59E; --line:#26362F; --accent:#3FBF98; --accent-ink:#06150F; --soft:#1C2D27;
+  --b1:#F26B60; --b2:#F09A52; --b3:#E0C54A; --b4:#8CC96A; --b5:#3FBF98; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1714; --surface:#15221E; --ink:#E6EFEB; --muted:#93A59E; --line:#26362F; --accent:#3FBF98; --accent-ink:#06150F; --soft:#1C2D27;
+  --b1:#F26B60; --b2:#F09A52; --b3:#E0C54A; --b4:#8CC96A; --b5:#3FBF98; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:1120px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.15}
+.mg{display:block;font-style:italic;font-weight:400;color:var(--muted);font-size:.93em;line-height:1.35;margin-top:1px}
+.top{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end}
+.top h1{font-size:clamp(1.6rem,4vw,2.3rem);letter-spacing:-.01em}
+.top h1 .mg{font-family:var(--f-body);font-size:.5em;margin-top:4px}
+.top p{margin:8px 0 0;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:10px}
+.meta label{display:flex;flex-direction:column;gap:3px;font:500 11px var(--f-data);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.meta label .mg{font:italic 400 11px var(--f-body);text-transform:none;letter-spacing:0}
+input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px}
+.banner[hidden]{display:none!important}
+button{font:500 13px var(--f-body);cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;text-align:left}
+button .mg{color:inherit;opacity:.72}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:hover{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.side{position:sticky;top:env(safe-area-inset-top,0px);display:flex;flex-direction:column;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+@media (max-width:860px){.side{position:static}}
+.overall{display:flex;align-items:baseline;gap:8px}
+.overall .num{font:700 3.4rem/1 var(--f-display);font-variant-numeric:tabular-nums}
+.overall .pct{font:500 1.2rem var(--f-data);color:var(--muted)}
+.band{display:flex;align-items:flex-start;gap:7px;font-weight:600;font-size:14px;margin-top:2px}
+.band .dot{margin-top:5px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--muted);flex:none}
+.cov{font:400 12px var(--f-data);color:var(--muted);margin-top:4px}
+.pbars{display:flex;flex-direction:column;gap:12px}
+.pb{display:grid;gap:4px}
+.pb .l{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:500}
+.pb .l>span:first-child{min-width:0}
+.pb .l .mg{font-size:11.5px}
+.pb .l>span:last-child{font:500 13px var(--f-data);font-variant-numeric:tabular-nums}
+.track{position:relative;height:9px;background:var(--soft);border-radius:2px}
+.track i{position:absolute;inset:0 auto 0 0;width:0;background:var(--muted);border-radius:2px;transition:width .25s}
+.track b{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--line)}
+.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font:400 10.5px/1.25 var(--f-body);color:var(--muted);text-align:center}
+.legend span{display:flex;flex-direction:column;align-items:center;gap:2px}
+.legend .dot{width:100%;height:4px;border-radius:2px;margin-bottom:2px}
+.legend em{font-style:italic;font-size:10px}
+.legend b{font:500 10px var(--f-data)}
+.side .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#fallback{width:100%;min-height:150px;font:12px var(--f-data);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.tab{flex:none;display:flex;gap:10px;align-items:center;padding:8px 13px;border-radius:8px;border:1px solid var(--line);background:var(--surface);max-width:230px}
+.tab .nm{display:block;min-width:0;white-space:normal;line-height:1.25}
+.tab .mg{font-size:11px}
+.tab[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[aria-selected=true] .mg{color:inherit;opacity:.75}
+.tab .v{font:500 12px var(--f-data);font-variant-numeric:tabular-nums;opacity:.85}
+.pillar[hidden]{display:none!important}
+.pillar{display:flex;flex-direction:column;gap:14px}
+.phead h2{font-size:1.5rem}
+.phead h2 .mg{font-family:var(--f-body);font-size:.55em}
+.phead p{margin:6px 0 0;max-width:64ch;font-size:14px}
+.sub{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.subh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.subh h3{font-size:1rem;display:flex;gap:8px;align-items:baseline}
+.subh h3 small{font:500 12px var(--f-data);color:var(--muted)}
+.subh h3 .mg{font-family:var(--f-body);font-size:.8em}
+.subh .sv{font:500 13px var(--f-data);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:7px;flex:none}
+.ind{display:flex;flex-direction:column;gap:10px;padding:14px;border-top:1px solid var(--line)}
+.ind:first-of-type{border-top:0}
+.ind .q{margin:0;font-weight:500;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.ind .q>span:first-child{min-width:0}
+.src{display:inline-block;font:500 10.5px var(--f-data);letter-spacing:.06em;padding:1px 6px;border-radius:3px;border:1px solid var(--line);color:var(--muted);margin-left:6px;vertical-align:1px;font-style:normal}
+.src.ADP{border-style:dashed}
+.skip{flex:none;padding:3px 8px;font-size:12px;color:var(--muted)}
+.skip[hidden]{display:none!important}
+.opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:980px) and (min-width:861px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){.opts{grid-template-columns:minmax(0,1fr)}}
+.opt{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:8px;padding:9px 10px 9px 13px;cursor:pointer;background:var(--surface);font-size:13.5px;line-height:1.4;min-width:0}
+.opt::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:0 3px 3px 0;background:var(--c)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .sc{font:500 11px var(--f-data);color:var(--muted)}
+.opt:hover{border-color:var(--accent)}
+.opt:has(input:checked){border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.opt:has(input:checked) .sc{color:var(--ink)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.foot{font-size:12.5px;color:var(--muted);display:grid;gap:6px}
+.foot b{font-family:var(--f-data);font-weight:500;color:var(--ink)}
+.foot .mg{font-size:12px}
+
+/* Print report (A4). The on-screen app is hidden and #report is shown. */
+#report{display:none}
+.rp-bar{height:8px;background:#E3EBE7;border-radius:2px;overflow:hidden}
+.rp-bar i{display:block;height:100%}
+@page{size:A4;margin:14mm 14mm 16mm}
+@media print{
+  :root:root:root{--bg:#fff;--surface:#fff;--ink:#12211C;--muted:#4D5E58;--line:#C9D3CE;--soft:#EDF2EF;--accent:#0E6B52;--b1:#B3261E;--b2:#C8651B;--b3:#A88C0C;--b4:#5E9B3A;--b5:#0E7A5A;color-scheme:light}
+  html,body{background:#fff!important;color:#12211C}
+  body{padding:0;font-size:10.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{display:none!important}
+  #report{display:block}
+  #report *{box-sizing:border-box}
+  .rp-kick{font:500 8.5pt var(--f-data);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .rp-head h1{font-size:23pt;margin:4pt 0 0;letter-spacing:-.01em}
+  .rp-head h1 .mg{font:italic 400 11pt var(--f-body);margin-top:3pt}
+  .rp-meta{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10pt;margin:14pt 0 0;padding:8pt 0;border-top:1.2pt solid var(--ink);border-bottom:1pt solid var(--line)}
+  .rp-meta dt{font:500 7.5pt var(--f-data);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .rp-meta dd{margin:2pt 0 0;font-weight:600;font-size:11pt}
+  .rp-ex{margin:10pt 0 0;padding:6pt 9pt;border:1pt dashed var(--b2);font-size:9pt}
+  .rp-overall{display:flex;align-items:center;gap:16pt;margin:14pt 0 8pt}
+  .rp-big{font-family:var(--f-display)}
+  .rp-big b{font-size:46pt;line-height:1;font-weight:700}
+  .rp-big span{font:500 14pt var(--f-data);color:var(--muted);margin-left:3pt}
+  .rp-bnd{display:flex;gap:7pt;align-items:flex-start;font-weight:600;font-size:12pt}
+  .rp-bnd .dot{margin-top:5pt}
+  table.rp-t{width:100%;border-collapse:collapse;font-size:9.5pt}
+  table.rp-t th{font:500 7.5pt var(--f-data);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:4pt 6pt;border-bottom:1pt solid var(--ink)}
+  table.rp-t td{padding:5pt 6pt;border-bottom:.6pt solid var(--line);vertical-align:top}
+  table.rp-t tr{break-inside:avoid}
+  table.rp-t .n{width:26pt;font-family:var(--f-data);color:var(--muted);font-size:8.5pt}
+  table.rp-t .s{width:34pt;text-align:right;font:600 10pt var(--f-data);font-variant-numeric:tabular-nums}
+  table.rp-t .b{width:110pt}
+  table.rp-t .ans{width:36%}
+  table.rp-t .mg{font-size:8.5pt}
+  .rp-sum td{padding:7pt 6pt}
+  .rp-pillar{break-before:page}
+  .rp-pillar h2{font-size:17pt;margin:0}
+  .rp-pillar h2 .mg{font:italic 400 10pt var(--f-body)}
+  .rp-pillar>p{margin:3pt 0 8pt;font-size:9.5pt}
+  .rp-sub{margin-top:10pt;break-inside:auto}
+  .rp-subh{display:flex;justify-content:space-between;gap:8pt;align-items:baseline;background:var(--soft);padding:5pt 6pt;font-weight:600;break-after:avoid}
+  .rp-subh small{font:500 8.5pt var(--f-data);color:var(--muted);margin-right:6pt}
+  .rp-subh .sc{font:600 10pt var(--f-data);display:flex;gap:5pt;align-items:center}
+  .rp-na{color:var(--muted)}
+  .rp-foot{margin-top:16pt;padding-top:8pt;border-top:1pt solid var(--line);font-size:8.5pt;color:var(--muted);break-inside:avoid}
+  .rp-foot .mg{font-size:8pt}
+  .rp-sign{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18pt;margin-top:22pt;break-inside:avoid}
+  .rp-sign div{border-top:.8pt solid var(--ink);padding-top:3pt;font-size:8.5pt;color:var(--muted)}
+  .rp-sign .mg{font-size:8pt}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Indice du Baromètre de Gouvernance Locale<em class="mg">Tondro ny Barômetra momba ny fitantanana eo an-toerana</em></h1>
+      <p>Pour chaque indicateur, choisissez la description qui correspond le mieux à la situation actuelle. Chaque réponse donne un score de 0 à 100.
+        <em class="mg">Isaky ny famantarana, fidio ny fanazavana mifanaraka indrindra amin'ny toe-javatra ankehitriny. Ny valiny tsirairay dia mahazo isa manomboka amin'ny 0 hatramin'ny 100.</em></p>
+    </div>
+    <div class="meta">
+      <label for="entity"><span>Entité évaluée<em class="mg">Toerana tombanana</em></span><input type="text" id="entity" placeholder="Commune / Kaominina"></label>
+      <label for="adate"><span>Date<em class="mg">Daty</em></span><input type="date" id="adate"></label>
+    </div>
+  </header>
+
+  <div class="banner" id="exbanner">
+    <span>Des réponses d'exemple sont chargées pour montrer le calcul. Effacez-les avant d'évaluer une vraie entité.
+      <em class="mg">Nisy valiny ohatra napetraka mba hanehoana ny fanisana. Fafao alohan'ny hanombanana tena toerana.</em></span>
+    <button type="button" id="clearEx" class="primary">Effacer les exemples<em class="mg">Hamafa ny ohatra</em></button>
+  </div>
+
+  <div class="grid">
+    <aside class="side" aria-label="Résultat global">
+      <div>
+        <div class="overall"><span class="num" id="oNum">–</span><span class="pct">/100</span></div>
+        <div class="band" id="oBand"></div>
+        <div class="cov" id="oCov"></div>
+      </div>
+      <div class="pbars" id="pbars"></div>
+      <div class="legend" id="legend" aria-label="Échelle"></div>
+      <div class="row">
+        <button type="button" id="copy"><span id="copyT">Copier le résumé</span><em class="mg" id="copyM">Adikao ny famintinana</em></button>
+        <button type="button" id="reset">Tout effacer<em class="mg">Fafana daholo</em></button>
+        <button type="button" id="print" class="primary">Imprimer / PDF<em class="mg">Hanonta / PDF</em></button>
+      </div>
+      <div id="confirm" hidden class="row">
+        <span style="font-size:13px">Effacer toutes les réponses ?<em class="mg">Fafana ve ny valiny rehetra?</em></span>
+        <button type="button" id="yes" class="primary">Oui, effacer<em class="mg">Eny, fafao</em></button>
+        <button type="button" id="no">Annuler<em class="mg">Ajanony</em></button>
+      </div>
+      <textarea id="fallback" hidden readonly aria-label="Résumé"></textarea>
+    </aside>
+
+    <main>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div id="pillars"></div>
+    </main>
+  </div>
+
+  <div class="foot">
+    <div><b>GGB</b> cadre et exemples d'indicateurs du Guide du Good Governance Barometer (FHI 360 / USAID, 2015). <b>BRI</b> liste de contrôle de Brillantes (2001), « Developing Indicators of Local Governance in the Philippines: Towards an ISO for LGUs ». <b>MAN</b> thèmes de Manasan, Gonzales et Gaffud (1999), au niveau du résumé. <b>ADP</b> (pointillé) ajouté ou reformulé pour combler un manque ; à valider avec le groupe d'acteurs.</div>
+    <div>Notation : les quatre réponses valent 0, 33, 67 et 100 points, de la description la plus faible à la plus forte. Un sous-critère est la moyenne de ses indicateurs renseignés, un pilier la moyenne de ses sous-critères, le score global la moyenne des cinq piliers. Les indicateurs laissés vides sont exclus. Les formulations sont une première version à adapter avec chaque communauté.
+      <em class="mg">Fanisana: ny valiny efatra dia mitentina 0, 33, 67 ary 100, manomboka amin'ny fanazavana malemy indrindra hatramin'ny tsara indrindra. Ny sampana dia ny salan'isan'ny famantarana navaly, ny andry ny salan'isan'ny sampana, ary ny isa ankapobeny ny salan'isan'ny andry dimy. Ny famantarana tsy navaly dia tsy ampidirina. Dikan-teny voalohany ny teny, ampifanarahina amin'ny vondrom-piarahamonina tsirairay.</em></div>
+  </div>
+</div>
+
+<div id="report" aria-hidden="true"></div>
+
+<script>
+var LV=[0,33,67,100];
+function bi(s){var a=s.split("|");return '<span>'+a[0]+'</span><em class="mg">'+a[1]+'</em>'}
+function fr(s){return s.split("|")[0]}
+var BN=["Critique|Ratsy be","Faible|Malemy","Moyen|Antonony","Bon|Tsara","Très bon|Tsara be"];
+var NA="Non évalué|Tsy mbola voatombana";
+var DATA=[
+{id:"E",name:"Efficacité|Fahombiazana",desc:"Réaliser la vision, bien gérer les ressources et répondre aux besoins des citoyens.|Hampihatra ny fahitana, hitantana tsara ny harena ary hamaly ny filan'ny olom-pirenena.",subs:[
+ {id:"1.1",name:"Vision et plan|Fahitana sy drafitra",ind:[
+  ["Plan de développement local participatif avec objectifs clairs et datés|Drafitra fampandrosoana eo an-toerana nanaovana ny fandraisana anjara, misy tanjona mazava sy misy daty","GGB",[
+   "Il n'y a pas de plan de développement local|Tsy misy drafitra fampandrosoana eo an-toerana",
+   "Un plan existe mais sans objectifs clairs|Misy drafitra nefa tsy misy tanjona mazava",
+   "Le plan a des objectifs, mais beaucoup sont vagues ou sans date|Misy tanjona ny drafitra fa maro no tsy mazava na tsy misy daty",
+   "Le plan a des objectifs clairs et datés, préparé avec la communauté|Mazava sy misy daty ny tanjona ary natao niaraka tamin'ny vondrom-piarahamonina"]],
+  ["Le plan de développement est mis à jour régulièrement|Havaozina tsindraindray ny drafitra fampandrosoana","BRI",[
+   "Jamais mis à jour|Tsy mbola nohavaozina mihitsy",
+   "Rarement, seulement quand on y est obligé|Vitsy no havaozina, rehefa voatery ihany",
+   "La plupart des années, mais en retard|Matetika isan-taona nefa tara",
+   "À temps, à chaque fois|Ao anatin'ny fotoana isaky ny mandeha"]],
+  ["Les projets communautaires du plan sont réalisés|Tanteraka ny tetikasa ao amin'ny drafitra","GGB",[
+   "Moins de 20 % des projets prévus sont réalisés|Latsaky ny 20 % amin'ny tetikasa nomanina no tanteraka",
+   "20 % à 49 % sont réalisés|20 % hatramin'ny 49 % no tanteraka",
+   "50 % à 79 % sont réalisés|50 % hatramin'ny 79 % no tanteraka",
+   "80 % ou plus sont réalisés|80 % na mihoatra no tanteraka"]],
+  ["Les programmes des dirigeants précédents sont poursuivis après évaluation|Tohizana aorian'ny fanombanana ny programa navelan'ny mpitondra teo aloha","BRI",[
+   "Les nouveaux dirigeants abandonnent ce que les précédents ont commencé|Ajanon'ny mpitondra vaovao ny natombok'ny teo aloha",
+   "Quelques programmes précédents continuent|Vitsy ny programa teo aloha no mitohy",
+   "La plupart continuent, sans évaluation|Maro no mitohy nefa tsy ahitana fanombanana",
+   "Les programmes sont évalués puis poursuivis ou améliorés|Ombanana ny programa, avy eo tohizana na hatsaraina"]]]},
+ {id:"1.2",name:"Gestion financière|Fitantanana ny vola",ind:[
+  ["Les rapports financiers et flux de trésorerie sont complets et publiés|Feno sy aposaka ny tatitra ara-bola","BRI",[
+   "Il n'y a pas de rapports financiers|Tsy misy tatitra ara-bola",
+   "Des rapports existent mais sont tardifs ou incomplets|Misy tatitra nefa tara na tsy feno",
+   "Les rapports sont complets, mais peu de gens les voient|Feno ny tatitra nefa vitsy no mahita azy",
+   "Les rapports sont complets, à temps et publiés|Feno ny tatitra, ao anatin'ny fotoana ary aposaka"]],
+  ["Les biens et les dettes sont enregistrés|Voarakitra ny fananana sy ny trosa","BRI",[
+   "Rien n'est enregistré|Tsy misy voarakitra",
+   "Liste partielle, non mise à jour|Misy lisitra tsy feno ary tsy nohavaozina",
+   "Liste complète, mise à jour irrégulièrement|Misy lisitra feno nefa tsy mirindra ny fanavaozana",
+   "Liste complète, mise à jour et vérifiée chaque année|Misy lisitra feno, havaozina ary hamarinina isan-taona"]],
+  ["Le budget est dépensé comme prévu|Laniana araka ny nomanina ny teti-bola","MAN",[
+   "Moins de 40 % du budget est dépensé comme prévu|Latsaky ny 40 % amin'ny teti-bola no laniana araka ny nomanina",
+   "40 % à 69 %|40 % hatramin'ny 69 %",
+   "70 % à 89 %|70 % hatramin'ny 89 %",
+   "90 % ou plus|90 % na mihoatra"]],
+  ["Les recettes locales sont collectées par rapport à l'objectif|Voaangona araka ny tanjona ny vola miditra eo an-toerana","MAN",[
+   "Moins de 40 % de l'objectif est collecté|Latsaky ny 40 % amin'ny tanjona no voaangona",
+   "40 % à 69 %|40 % hatramin'ny 69 %",
+   "70 % à 89 %|70 % hatramin'ny 89 %",
+   "90 % ou plus|90 % na mihoatra"]]]},
+ {id:"1.3",name:"Décision et information|Fanapahan-kevitra sy vaovao",ind:[
+  ["L'information locale est tenue à jour et utilisée|Tazonina vaovao sy ampiasaina ny vaovao eo an-toerana","BRI",[
+   "Aucune donnée n'est conservée|Tsy misy angona tehirizina",
+   "Quelques données sur papier, dispersées|Misy angona vitsivitsy eo amin'ny taratasy, miparitaka",
+   "Données au même endroit mais souvent dépassées|Eo amin'ny toerana iray ny angona nefa matetika efa lany daty",
+   "Données au même endroit, à jour et utilisées pour décider|Eo amin'ny toerana iray ny angona, vaovao ary ampiasaina amin'ny fanapahan-kevitra"]],
+  ["Organisation claire avec des rôles écrits|Fandaminana mazava misy andraikitra voasoratra","BRI",[
+   "Personne ne sait qui fait quoi|Tsy fantatry ny olona izay ataon'ny tsirairay",
+   "La structure n'existe que sur papier|Eo amin'ny taratasy ihany ny rafitra",
+   "Structure connue, mais certains rôles se chevauchent|Fantatra ny rafitra nefa misy andraikitra mifanindry",
+   "Structure claire, rôles écrits et connus de tous|Mazava ny rafitra, voasoratra ary fantatry ny rehetra ny andraikitra"]],
+  ["Coordination avec les autres niveaux et les voisins|Fiaraha-miasa amin'ny haavo hafa sy ny mpifanolo-bodirindrina","BRI",[
+   "Aucun contact|Tsy misy fifandraisana",
+   "Contacts occasionnels, rien de formel|Misy fifandraisana indraindray, tsy ofisialy",
+   "Quelques accords écrits ou activités communes|Misy fifanarahana an-tsoratra na asa iarahana vitsivitsy",
+   "Travail commun régulier avec des accords écrits|Miara-miasa tsy tapaka araka ny fifanarahana an-tsoratra"]],
+  ["Les lourdeurs administratives sont réduites|Mihena ny fahasarotana ara-pitantanana","BRI",[
+   "Les services sont lents et compliqués|Miadana sy sarotra ny tolotra",
+   "Quelques procédures ont été simplifiées|Nohamoramina ny fombafomba vitsivitsy",
+   "Services principaux simplifiés, avec quelques retards|Nohamoramina ny tolotra fototra, misy fahatarana indraindray",
+   "Services principaux rapides, au même endroit, étapes claires|Faingana ny tolotra fototra, eo amin'ny toerana iray, mazava ny dingana"]]]},
+ {id:"1.4",name:"Satisfaction à l'égard des services|Fahafaham-po amin'ny tolotra",ind:[
+  ["Les citoyens sont satisfaits des services de base|Afa-po ny olom-pirenena amin'ny tolotra fototra","GGB",[
+   "La plupart des gens sont mécontents|Ny ankamaroan'ny olona tsy afa-po",
+   "Beaucoup de gens sont mécontents|Maro ny olona tsy afa-po",
+   "La plupart des gens sont satisfaits|Ny ankamaroan'ny olona afa-po",
+   "Presque tout le monde est satisfait|Saika ny rehetra no afa-po"]],
+  ["Les services de base obligatoires sont assurés et financés|Atolotra sy misy vola ny tolotra fototra tsy maintsy omena","BRI",[
+   "La plupart ne sont pas fournis|Ny ankamaroany tsy atolotra",
+   "Certains sont fournis, sans budget|Ny sasany atolotra nefa tsy misy teti-bola",
+   "La plupart sont fournis, mais le budget est insuffisant|Ny ankamaroany atolotra nefa tsy ampy ny teti-bola",
+   "Tous sont fournis et financés|Atolotra sy misy vola ny rehetra"]],
+  ["Les services respectent une norme fixée|Mahafeno ny fenitra napetraka ny tolotra","MAN",[
+   "Les services respectent rarement une norme|Tsy fahita firy ny tolotra mahafeno fenitra",
+   "Moins de la moitié respecte la norme|Latsaky ny antsasany no mahafeno ny fenitra",
+   "La plupart respectent la norme|Ny ankamaroany mahafeno ny fenitra",
+   "Presque tous respectent la norme|Saika ny rehetra mahafeno ny fenitra"]]]},
+ {id:"1.5",name:"Leadership|Fitarihana",ind:[
+  ["Le dirigeant énonce une vision claire et constante|Milaza fahitana mazava sy miorina ny mpitarika","BRI",[
+   "Aucune vision n'est énoncée|Tsy misy fahitana voalaza",
+   "Une vision est énoncée mais change souvent|Misy fahitana voalaza nefa miova matetika",
+   "Vision claire mais connue de peu de gens|Mazava ny fahitana nefa vitsy no mahalala azy",
+   "Vision claire, constante et connue de la plupart|Mazava sy miorina ary fantatry ny ankamaroan'ny olona ny fahitana"]],
+  ["Ouverture aux retours des citoyens|Fahafahana mandray ny hevitra avy amin'ny olona","BRI",[
+   "Les retours sont ignorés|Tsy mihaino ny hevitra",
+   "Les retours sont entendus mais rarement utilisés|Henoina ny hevitra nefa tsy fahita firy ampiasaina",
+   "Les retours sont souvent utilisés|Matetika ampiasaina ny hevitra",
+   "Les retours sont utilisés et les gens sont informés du résultat|Ampiasaina ny hevitra ary ampahafantarina ny olona ny vokany"]],
+  ["Formation des responsables et du personnel|Fiofanana ho an'ny mpitondra sy ny mpiasa","BRI",[
+   "Il n'y a pas de formation|Tsy misy fiofanana",
+   "Peu d'employés sont formés|Vitsy ny mpiasa nahazo fiofanana",
+   "Beaucoup d'employés sont formés|Maro ny mpiasa nahazo fiofanana",
+   "Personnel et responsables formés chaque année|Isan-taona no ofanina ny mpiasa sy ny mpitondra"]],
+  ["Partenariats avec les agences, bailleurs et autres collectivités|Fiaraha-miasa amin'ny masoivoho, mpamatsy vola ary kaominina hafa","BRI",[
+   "Il n'y a pas de partenaires|Tsy misy mpiara-miasa",
+   "Quelques partenaires, peu de résultats|Misy mpiara-miasa vitsivitsy, vokatra kely",
+   "Plusieurs partenaires, quelques résultats|Maromaro ny mpiara-miasa, misy vokatra sasany",
+   "Des partenaires actifs apportent un appui régulier|Mavitrika ny mpiara-miasa ary mitondra fanohanana tsy tapaka"]]]}
+]},
+{id:"R",name:"État de droit|Fanjakan'ny lalàna",desc:"Des règles justes qui existent, sont appliquées et ouvertes à tous les citoyens.|Lalàna marina misy, ampiharina ary misokatra ho an'ny olom-pirenena rehetra.",subs:[
+ {id:"2.1",name:"Existence du cadre juridique|Fisian'ny fitsipika ara-dalàna",ind:[
+  ["Des règles locales existent pour les principales responsabilités|Misy lalàna eo an-toerana momba ny andraikitra lehibe","GGB",[
+   "Il n'y a presque pas de règles locales|Saika tsy misy lalàna eo an-toerana",
+   "Des règles existent pour quelques domaines|Misy lalàna ho an'ny sehatra vitsy",
+   "Des règles existent pour la plupart des domaines|Misy lalàna ho an'ny ankamaroan'ny sehatra",
+   "Des règles existent pour tous les domaines principaux|Misy lalàna ho an'ny sehatra lehibe rehetra"]],
+  ["Les règles sont revues et mises à jour|Hodinihina sy havaozina ny lalàna","BRI",[
+   "Elles ne sont jamais revues|Tsy hodinihina mihitsy",
+   "Revues une fois, il y a longtemps|Nodinihina indray mandeha, efa ela",
+   "Revues de temps en temps|Hodinihina indraindray",
+   "Revues selon un cycle régulier|Hodinihina araka ny fotoana tsy tapaka"]],
+  ["Les règles coutumières et traditionnelles sont reconnues|Ekena ny fomba sy lalàna nentim-paharazana","BRI",[
+   "Elles sont ignorées|Tsy raharahaina",
+   "Reconnues en paroles seulement|Ekena am-bava ihany",
+   "Reconnues dans certaines décisions|Ekena amin'ny fanapahan-kevitra sasany",
+   "Reconnues et appliquées, en accord avec la loi nationale|Ekena sy ampiharina, mifanaraka amin'ny lalàna nasionaly"]]]},
+ {id:"2.2",name:"Efficacité du cadre juridique|Fampiharana ny fitsipika",ind:[
+  ["Les règles sont appliquées|Ampiharina ny lalàna","BRI",[
+   "Les règles ne sont pas appliquées|Tsy ampiharina ny lalàna",
+   "Appliquées dans quelques cas|Ampiharina amin'ny raharaha vitsivitsy",
+   "Appliquées le plus souvent, avec des exceptions|Ampiharina matetika, misy ny hafa",
+   "Appliquées équitablement pour tous|Ampiharina mitovy ho an'ny rehetra"]],
+  ["Les règles locales sont suivies|Arahina maso ny fampiharana ny lalàna eo an-toerana","BRI",[
+   "Il n'y a aucun suivi|Tsy misy fanaraha-maso",
+   "Un suivi existe mais n'est pas utilisé|Misy fanaraha-maso nefa tsy ampiasaina",
+   "Il est utilisé de temps en temps|Ampiasaina indraindray",
+   "Utilisé régulièrement pour suivre chaque règle|Ampiasaina tsy tapaka amin'ny lalàna tsirairay"]],
+  ["Les procédures sont affichées là où les gens peuvent les voir|Apetraka eo amin'ny toerana ahitan'ny olona ny fombafomba","BRI",[
+   "Aucune procédure n'est affichée|Tsy misy fombafomba apetraka",
+   "Quelques-unes sont affichées|Vitsy no apetraka",
+   "La plupart sont affichées|Ny ankamaroany apetraka",
+   "Toutes les procédures principales sont affichées et faciles à lire|Apetraka ny fombafomba lehibe rehetra ary mora vakiana"]]]},
+ {id:"2.3",name:"Accès des citoyens à la justice|Fidirana amin'ny fitsarana",ind:[
+  ["Un organe local de résolution des conflits fonctionne|Miasa ny vondrona eo an-toerana mamaha ny fifandirana","BRI",[
+   "Il n'en existe pas|Tsy misy",
+   "Il existe mais ne fonctionne pas|Misy nefa tsy miasa",
+   "Il fonctionne mais pas pour tout le monde|Miasa nefa tsy ho an'ny rehetra",
+   "Il fonctionne bien et inspire confiance|Miasa tsara ary azo itokisana"]],
+  ["Les citoyens savent où aller pour une aide juridique|Fantatry ny olom-pirenena izay alehany mba hahazo fanampiana ara-dalàna","ADP",[
+   "Presque personne ne le sait|Saika tsy misy mahalala",
+   "Peu de gens le savent|Vitsy ny mahalala",
+   "Beaucoup de gens le savent|Maro ny mahalala",
+   "Presque tout le monde le sait|Saika ny rehetra mahalala"]],
+  ["Les statistiques sur la criminalité et les affaires sont disponibles|Misy ny antontan'isa momba ny heloka sy ny raharaha","BRI",[
+   "Il n'y a pas de statistiques|Tsy misy antontan'isa",
+   "Il y en a mais elles ne sont pas partagées|Misy nefa tsy zaraina",
+   "Disponibles sur demande|Azo angatahana",
+   "Publiées régulièrement|Aposaka tsy tapaka"]]]},
+ {id:"2.4",name:"Fréquence de la corruption|Haben'ny kolikoly",ind:[
+  ["Un organe ou un point focal de lutte contre la corruption existe|Misy vondrona na olona iray miady amin'ny kolikoly","BRI",[
+   "Il n'en existe pas|Tsy misy",
+   "Il existe sur papier seulement|Eo amin'ny taratasy ihany",
+   "Il existe mais est rarement utilisé|Misy nefa tsy fahita firy ampiasaina",
+   "Il existe, fonctionne et est connu des citoyens|Misy, miasa ary fantatry ny olom-pirenena"]],
+  ["Les marchés publics suivent des règles ouvertes et concurrentielles|Araka ny fitsipika misokatra sy fifaninanana ny fanomezana tolo-bidy","ADP",[
+   "Les contrats sont attribués sans règles|Omena tsy misy fitsipika ny kaontra",
+   "Des règles existent mais sont souvent contournées|Misy fitsipika nefa matetika tsy arahina",
+   "Règles suivies pour la plupart des contrats|Arahina ny fitsipika amin'ny ankamaroan'ny kaontra",
+   "Règles ouvertes et concurrentielles pour tous les contrats|Ampiharina amin'ny kaontra rehetra ny fitsipika misokatra sy fifaninanana"]],
+  ["Les cas de corruption signalés sont suivis|Arahina ny raharaha kolikoly voatatitra","ADP",[
+   "Les cas sont ignorés|Tsy raharahaina ny raharaha",
+   "Les cas sont notés mais pas suivis|Voarakitra nefa tsy arahina",
+   "Certains cas font l'objet d'une enquête|Misy raharaha sasany vokarina ny famotorana",
+   "Les cas font l'objet d'une enquête et les résultats sont connus|Ahaina famotorana ny raharaha ary fantatra ny vokany"]]]}
+]},
+{id:"A",name:"Redevabilité|Fandraisana andraikitra sy fanomezana tatitra",desc:"Les dirigeants rendent compte, l'information est ouverte et les citoyens peuvent faire recours.|Mitaky tatitra ny mpitondra, misokatra ny vaovao ary afaka mitaraina ny olom-pirenena.",subs:[
+ {id:"3.1",name:"Transparence|Fisokafana",ind:[
+  ["Les rapports d'activité sont affichés par rapport aux objectifs|Apetraka ny tatitra momba ny asa vita raha oharina amin'ny tanjona","BRI",[
+   "Il n'y a pas de rapports|Tsy misy tatitra",
+   "Des rapports existent mais ne sont pas partagés|Misy tatitra nefa tsy zaraina",
+   "Rapports partagés, sans comparaison aux objectifs|Zaraina ny tatitra nefa tsy ampitahaina amin'ny tanjona",
+   "Rapports affichés régulièrement et comparés aux objectifs|Apetraka tsy tapaka ny tatitra ary ampitahaina amin'ny tanjona"]],
+  ["Le budget et le plan d'investissement sont présentés aux communautés|Aseho amin'ny vondrom-piarahamonina ny teti-bola sy ny drafitra fampiasam-bola","BRI",[
+   "Ils ne sont jamais présentés|Tsy asehoy mihitsy",
+   "Présentés à quelques communautés|Aseho amin'ny vondrom-piarahamonina vitsivitsy",
+   "Présentés à beaucoup de communautés|Aseho amin'ny maro",
+   "Présentés à chaque communauté|Aseho amin'ny vondrom-piarahamonina rehetra"]],
+  ["Des assemblées citoyennes sont tenues|Atao ny fivoriamben'ny olom-pirenena","BRI",[
+   "Aucune n'est tenue|Tsy misy atao",
+   "Rares, seulement quand c'est obligatoire|Tsy fahita firy, rehefa voatery ihany",
+   "Fréquentes mais pas partout|Matetika nefa tsy eny rehetra",
+   "Tenues régulièrement dans chaque communauté|Atao tsy tapaka amin'ny vondrom-piarahamonina rehetra"]],
+  ["Médias et information du public|Mpanao gazety sy fampahafantarana ny daholobe","BRI",[
+   "Pas d'accès et pas de point d'information|Tsy misy fidirana ary tsy misy toerana fampahafantarana",
+   "Accès sur demande seulement|Fidirana rehefa angatahana ihany",
+   "Un point d'information existe mais reste limité|Misy toerana fampahafantarana nefa voafetra",
+   "Accès ouvert et point d'information fonctionnel|Misokatra ny fidirana ary miasa ny toerana fampahafantarana"]],
+  ["Les comptes rendus de réunion et les décisions sont accessibles|Azo jerena ny tatitra fivoriana sy ny fanapahan-kevitra","GGB",[
+   "Les réunions ne sont pas consignées|Tsy voarakitra ny fivoriana",
+   "Des comptes rendus existent mais restent privés|Misy tatitra nefa miafina",
+   "Disponibles sur demande|Azo angatahana",
+   "Affichés et faciles à obtenir|Apetraka ary mora azo"]]]},
+ {id:"3.2",name:"Contrôles et équilibres|Fanaraha-maso sy fifandanjana",ind:[
+  ["Les rôles de l'exécutif et du conseil sont séparés|Voasaraka ny andraikitry ny mpanatanteraka sy ny filan-kevitra","BRI",[
+   "Les rôles sont mélangés|Mifangaro ny andraikitra",
+   "Rôles écrits mais pas respectés|Voasoratra nefa tsy arahina",
+   "Rôles le plus souvent respectés|Arahina matetika",
+   "Rôles clairs et respectés|Mazava ary arahina"]],
+  ["Les rapports d'audit sont montrés aux citoyens|Aseho ny olom-pirenena ny tatitry ny fanaraha-maso ara-bola","BRI",[
+   "Il n'y a pas d'audit|Tsy misy fanaraha-maso ara-bola",
+   "Un audit est fait mais pas partagé|Atao nefa tsy zaraina",
+   "Partagé avec les responsables seulement|Zaraina amin'ny mpitondra ihany",
+   "Affiché là où les citoyens peuvent le voir|Apetraka eo amin'ny toerana ahitan'ny olom-pirenena"]],
+  ["Un comité de contrôle inclut des membres extérieurs à l'administration|Misy mpikambana avy ivelan'ny fanjakana ao amin'ny komitin'ny fanaraha-maso","BRI",[
+   "Il n'y en a pas|Tsy misy",
+   "Il existe mais sans membres extérieurs|Misy nefa tsy misy mpikambana avy any ivelany",
+   "Membres extérieurs, mais se réunit rarement|Misy mpikambana avy any ivelany nefa vitsy ny fivoriany",
+   "Membres extérieurs et réunions régulières|Misy mpikambana avy any ivelany ary mivory tsy tapaka"]]]},
+ {id:"3.3",name:"Recours|Fitarainana sy fangatahana fandinihana",ind:[
+  ["Les citoyens peuvent se plaindre ou faire appel|Afaka mitaraina na mangataka fandinihana indray ny olom-pirenena","GGB",[
+   "Il n'y a aucun moyen de se plaindre|Tsy misy lalana hitarainana",
+   "Un guichet ou une boîte existe mais ne fonctionne pas|Misy birao na boaty nefa tsy miasa",
+   "Il fonctionne, mais peu de gens l'utilisent|Miasa nefa vitsy no mampiasa",
+   "Il fonctionne, est connu et utilisé|Miasa, fantatra ary ampiasaina"]],
+  ["Les plaintes sont traitées à temps|Voavaha ao anatin'ny fotoana ny fitarainana","ADP",[
+   "Les plaintes ne reçoivent jamais de réponse|Tsy valiana mihitsy ny fitarainana",
+   "Peu reçoivent une réponse|Vitsy no valiana",
+   "La plupart reçoivent une réponse, souvent tard|Ny ankamaroany valiana nefa matetika tara",
+   "La plupart sont réglées dans le délai fixé|Ny ankamaroany voavaha ao anatin'ny fotoana napetraka"]]]},
+ {id:"3.4",name:"Réactivité des autorités|Fahaizan'ny manam-pahefana mamaly",ind:[
+  ["Les demandes des citoyens reçoivent une réponse|Valiana ny fangatahan'ny olom-pirenena","ADP",[
+   "Les demandes sont ignorées|Tsy raharahaina ny fangatahana",
+   "Peu reçoivent une réponse|Vitsy no valiana",
+   "La plupart reçoivent une réponse, souvent tard|Ny ankamaroany valiana nefa matetika tara",
+   "Réponse dans le délai fixé|Valiana ao anatin'ny fotoana napetraka"]],
+  ["Les retours des consultations changent les décisions|Ovaina ny fanapahan-kevitra noho ny hevitra azo tamin'ny fakan-kevitra","BRI",[
+   "Jamais|Tsy mitranga mihitsy",
+   "Rarement|Tsy fahita firy",
+   "Souvent|Matetika",
+   "Toujours, et les raisons sont expliquées|Foana, ary hazavaina ny antony"]],
+  ["Les responsables sont présents dans les communautés|Hita eo amin'ny vondrom-piarahamonina ny mpitondra","BRI",[
+   "Ils ne viennent jamais|Tsy tonga mihitsy",
+   "Seulement pendant les campagnes|Tonga rehefa fampielezan-kevitra ihany",
+   "Ils visitent certaines communautés|Mitsidika vondrom-piarahamonina sasany",
+   "Ils visitent toutes les communautés régulièrement|Mitsidika ny rehetra tsy tapaka"]]]},
+ {id:"3.5",name:"Intégrité|Fahamarinana",ind:[
+  ["Évaluation de la performance des responsables et du personnel|Fanombanana ny fahombiazan'ny mpitondra sy ny mpiasa","BRI",[
+   "Il n'y en a pas|Tsy misy",
+   "Elle existe mais n'est pas utilisée|Misy nefa tsy ampiasaina",
+   "Elle est utilisée sans conséquence|Ampiasaina nefa tsy misy vokany",
+   "Utilisée : le bon travail est récompensé, le mauvais sanctionné|Ampiasaina: valisoana ny asa tsara, saziana ny asa ratsy"]],
+  ["Code d'éthique et déclarations de patrimoine|Fitsipi-pitondrantena sy fanambarana ny fananana","BRI",[
+   "Il n'y en a pas|Tsy misy",
+   "Un code existe mais n'est pas appliqué|Misy fitsipika nefa tsy ampiharina",
+   "Appliqué à certains responsables|Ampiharina amin'ny mpitondra sasany",
+   "Appliqué et les déclarations sont déposées|Ampiharina ary misy ny fanambarana nalefa"]],
+  ["Audits de performance|Fanaraha-maso ny fahombiazana","BRI",[
+   "Aucun n'est réalisé|Tsy misy atao",
+   "Un a été réalisé dans le passé|Nisy indray mandeha tamin'ny lasa",
+   "Réalisés certaines années|Atao indraindray isan-taona",
+   "Réalisés chaque année prévue|Atao isaky ny taona nomanina"]]]}
+]},
+{id:"Q",name:"Équité|Fitoviana sy rariny",desc:"Accès équitable aux services, au pouvoir, aux ressources et aux moyens d'existence pour tous.|Fidirana mitovy amin'ny tolotra, fahefana, harena ary fivelomana ho an'ny rehetra.",subs:[
+ {id:"5.1",name:"Cadre juridique|Fitsipika ara-dalàna",ind:[
+  ["Les règles locales interdisent la discrimination|Mandrara ny fanavakavahana ny lalàna eo an-toerana","ADP",[
+   "Il n'y a pas de telles règles|Tsy misy lalàna toy izany",
+   "Les règles protègent un seul groupe|Miaro vondrona iray ny lalàna",
+   "Les règles protègent la plupart des groupes|Miaro ny ankamaroan'ny vondrona ny lalàna",
+   "Des règles claires protègent tous les groupes et sont appliquées|Miaro ny vondrona rehetra ny lalàna mazava ary ampiharina"]],
+  ["Le budget tient compte des femmes et des groupes vulnérables|Raisina ao amin'ny teti-bola ny vehivavy sy ny vondrona marefo","ADP",[
+   "Ils ne sont pas pris en compte|Tsy raisina",
+   "Mentionnés mais sans fonds|Voalaza nefa tsy misy vola",
+   "Certaines lignes budgétaires les ciblent|Misy andalana amin'ny teti-bola natao ho azy ireo",
+   "Budget pensé avec ces groupes en tête|Natao ho azy ireo ny teti-bola"]],
+  ["Les droits des groupes vulnérables sont reconnus dans les règles locales|Ekena ao amin'ny lalàna eo an-toerana ny zon'ny vondrona marefo","ADP",[
+   "Ils ne sont pas reconnus|Tsy ekena",
+   "Reconnus en paroles seulement|Ekena am-bava ihany",
+   "Reconnus dans certaines règles|Ekena amin'ny lalàna sasany",
+   "Reconnus dans les règles et appliqués|Ekena ao amin'ny lalàna ary ampiharina"]]]},
+ {id:"5.2",name:"Accès aux services de base|Fidirana amin'ny tolotra fototra",ind:[
+  ["Ménages ayant accès à la santé, à l'eau et à l'éducation|Tokantrano afaka mahazo fahasalamana, rano ary fanabeazana","ADP",[
+   "Moins d'un quart des ménages|Latsaky ny ampahefatry ny tokantrano",
+   "D'un quart à la moitié des ménages|Ampahefatra hatramin'ny antsasany",
+   "De la moitié aux trois quarts des ménages|Antsasany hatramin'ny telo ampahefatra",
+   "Plus des trois quarts des ménages|Mihoatra ny telo ampahefatry ny tokantrano"]],
+  ["Les services sont répartis équitablement entre les communautés|Zarazaraina mitovy ny tolotra amin'ny vondrom-piarahamonina","BRI",[
+   "Les services vont à quelques zones seulement|Ny faritra vitsy ihany no mahazo tolotra",
+   "De grands écarts entre les communautés|Lehibe ny elanelana eo amin'ny vondrom-piarahamonina",
+   "De petits écarts|Kely ny elanelana",
+   "Services répartis équitablement|Zarazaraina mitovy ny tolotra"]]]},
+ {id:"5.3",name:"Accès au pouvoir|Fidirana amin'ny fahefana",ind:[
+  ["Femmes, jeunes et minorités dans les organes de décision|Vehivavy, tanora ary vitsy an'isa ao amin'ny vondrona mandray fanapahan-kevitra","ADP",[
+   "Ils sont absents|Tsy misy",
+   "Quelques-uns sont présents, sans voix|Vitsy no ao, tsy manana feo",
+   "Présents avec une influence limitée|Ao nefa voafetra ny fitaomany",
+   "Bien représentés et écoutés|Misy solontena ampy ary henoina"]],
+  ["Les secteurs religieux, économique et professionnel participent aux programmes|Miditra amin'ny programa ny sehatra fivavahana, varotra ary asa","BRI",[
+   "Aucun n'est impliqué|Tsy misy tafiditra",
+   "Peu sont impliqués|Vitsy no tafiditra",
+   "Plusieurs sont impliqués|Maromaro no tafiditra",
+   "Tous les secteurs clés sont impliqués|Tafiditra ny sehatra lehibe rehetra"]]]},
+ {id:"5.4",name:"Accès aux ressources|Fidirana amin'ny harena",ind:[
+  ["Des fonds sont réservés à la réduction de la pauvreté|Misy vola natokana hampihenana ny fahantrana","BRI",[
+   "Aucun fonds n'est réservé|Tsy misy vola natokana",
+   "Fonds faibles et irréguliers|Kely sady tsy tapaka ny vola",
+   "Fonds réguliers, sous l'objectif|Tsy tapaka ny vola nefa latsaky ny tanjona",
+   "Fonds à l'objectif ou au-dessus|Miorina amin'ny tanjona na mihoatra ny vola"]],
+  ["Règles sur la terre et les ressources naturelles|Lalàna momba ny tany sy ny harena voajanahary","ADP",[
+   "Il n'y a pas de règles claires|Tsy misy lalàna mazava",
+   "Règles injustes ou inconnues|Misy lalàna nefa tsy rariny na tsy fantatra",
+   "Règles claires et le plus souvent justes|Mazava ary matetika marina ny lalàna",
+   "Règles claires, justes et connues de tous|Mazava, marina ary fantatry ny rehetra ny lalàna"]]]},
+ {id:"5.5",name:"Opportunités de moyens d'existence|Fahafahana mivelona",ind:[
+  ["Programmes de moyens d'existence|Programa fanampiana ny fivelomana","BRI",[
+   "Il n'y en a pas|Tsy misy",
+   "Ils touchent peu de ménages|Tsy tonga amin'ny tokantrano maro",
+   "Ils touchent beaucoup de ménages|Tonga amin'ny tokantrano maro",
+   "Ils touchent la plupart des ménages ciblés|Tonga amin'ny ankamaroan'ny tokantrano kendrena"]],
+  ["La cartographie de la pauvreté oriente les programmes|Ny sarintany ny fahantrana no mitarika ny programa","BRI",[
+   "Il n'y a pas de carte de la pauvreté|Tsy misy sarintany ny fahantrana",
+   "Carte ancienne et non utilisée|Efa taloha ny sarintany ary tsy ampiasaina",
+   "Carte utilisée de temps en temps|Ampiasaina indraindray",
+   "Carte de moins de 3 ans, utilisée pour cibler les programmes|Latsaky ny 3 taona ny sarintany ary ampiasaina hikendrena ny programa"]],
+  ["Protection sociale pour les pauvres, les personnes âgées et handicapées|Fiarovana ara-tsosialy ho an'ny mahantra, ny be antitra ary ny kilemaina","BRI",[
+   "Il n'y en a pas|Tsy misy",
+   "Elle touche peu de personnes|Vitsy no tonga",
+   "Elle touche beaucoup de personnes|Maro no tonga",
+   "Elle touche la plupart des personnes éligibles|Tonga amin'ny ankamaroan'ny mendrika"]]]}
+]},
+{id:"P",name:"Participation|Fandraisana anjara",desc:"Les citoyens et la société civile contribuent aux plans et aux décisions.|Mandray anjara amin'ny drafitra sy fanapahan-kevitra ny olom-pirenena sy ny fiarahamonina sivily.",subs:[
+ {id:"4.1",name:"Cadre institutionnel|Rafitra",ind:[
+  ["Un conseil ou comité local de développement fonctionne|Miasa ny filankevitra na komity eo an-toerana misahana ny fampandrosoana","GGB",[
+   "Il n'y en a pas|Tsy misy",
+   "Il existe mais ne se réunit pas|Misy nefa tsy mivory",
+   "Il se réunit mais son rôle est limité|Mivory nefa voafetra ny andraikiny",
+   "Il se réunit régulièrement et a un vrai rôle|Mivory tsy tapaka ary manana andraikitra mazava"]],
+  ["Un comité de suivi inclut la société civile|Ao amin'ny komity mpanaraka ny asa ny fiarahamonina sivily","BRI",[
+   "Il n'y en a pas|Tsy misy",
+   "Il existe sans membres de la société civile|Misy nefa tsy misy solontenan'ny fiarahamonina sivily",
+   "Il inclut la société civile mais est inactif|Misy ny fiarahamonina sivily nefa tsy miasa",
+   "Il inclut la société civile et est actif|Misy ny fiarahamonina sivily ary mavitrika"]],
+  ["Des règles exigent l'avis des citoyens pour la planification et le budget|Misy lalàna mitaky ny hevitry ny olom-pirenena amin'ny fandrafetana drafitra sy teti-bola","ADP",[
+   "Il n'y a pas de règle|Tsy misy lalàna",
+   "Une règle couvre une étape|Lalàna iray ho an'ny dingana iray",
+   "Des règles couvrent certaines étapes|Lalàna ho an'ny dingana sasany",
+   "Des règles couvrent la planification et le budget|Lalàna ho an'ny drafitra sy ny teti-bola"]]]},
+ {id:"4.2",name:"Engagement des citoyens|Fandraisan'ny olom-pirenena anjara",ind:[
+  ["Des consultations publiques sont organisées|Atao ny fakan-kevitra amin'ny daholobe","BRI",[
+   "Aucune n'est organisée|Tsy misy atao",
+   "Elles sont rares|Tsy fahita firy",
+   "Fréquentes mais oublient certains secteurs|Matetika nefa misy sehatra adino",
+   "Régulières et incluent tous les secteurs|Tsy tapaka ary tafiditra ny sehatra rehetra"]],
+  ["Les personnes concernées par les programmes sont consultées|Alaina ny hevitry ny olona tohanan'ny programa","BRI",[
+   "Jamais|Tsy mitranga mihitsy",
+   "Rarement|Tsy fahita firy",
+   "Souvent|Matetika",
+   "Toujours, et c'est consigné|Foana ary voarakitra"]],
+  ["Femmes et jeunes participent aux consultations|Mandray anjara amin'ny fakan-kevitra ny vehivavy sy ny tanora","ADP",[
+   "Ils sont presque absents|Saika tsy misy",
+   "Peu participent|Vitsy no mandray anjara",
+   "Beaucoup participent|Maro no mandray anjara",
+   "Ils participent en nombre égal|Mitovy isa amin'ny hafa"]]]},
+ {id:"4.3",name:"Engagement civique|Fandraisan'ny fiarahamonina sivily anjara",ind:[
+  ["Une liste des organisations de la société civile est tenue|Misy lisitry ny fikambanana ao amin'ny fiarahamonina sivily tazonina","BRI",[
+   "Il n'y a pas de liste|Tsy misy lisitra",
+   "La liste est ancienne|Efa taloha ny lisitra",
+   "Mise à jour de temps en temps|Havaozina indraindray",
+   "Mise à jour chaque année et utilisée|Havaozina isan-taona ary ampiasaina"]],
+  ["La société civile participe à la préparation de la vision et du plan|Mandray anjara amin'ny fanomanana ny fahitana sy ny drafitra ny fiarahamonina sivily","BRI",[
+   "Elle n'est pas impliquée|Tsy tafiditra",
+   "Invitée mais vient rarement|Atolotra nefa tsy fahita firy tonga",
+   "Elle participe à une partie de la planification|Mandray anjara amin'ny drafitra sasany",
+   "Elle participe à toute la planification|Mandray anjara amin'ny drafitra rehetra"]],
+  ["Collectivités et ONG travaillent ensemble sur les services|Miara-miasa amin'ny ONG ny kaominina amin'ny tolotra","BRI",[
+   "Il n'y a pas de collaboration|Tsy misy fiaraha-miasa",
+   "Informelle et limitée|Tsy ofisialy sady voafetra",
+   "Formelle pour certains services|Ofisialy ho an'ny tolotra sasany",
+   "Formelle pour la plupart des services|Ofisialy ho an'ny ankamaroan'ny tolotra"]]]}
+]}
+];
+var ALL=[];DATA.forEach(function(p){p.subs.forEach(function(s){s.ind=s.ind.map(function(r,i){var o={id:s.id+"."+(i+1),t:r[0],src:r[1],lv:r[2]};ALL.push(o);return o})})});
+var KEY="gpb-v2";
+var S={entity:"",date:"",examples:true,scores:{}};
+function ex(id){var h=0;for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))%97;return LV[[1,2,0,3,2,1,2,3][h%8]]}
+function loadEx(){S.scores={};ALL.forEach(function(o){S.scores[o.id]=ex(o.id)});S.examples=true}
+try{var raw=localStorage.getItem(KEY);if(raw){var d=JSON.parse(raw);if(d&&d.scores)S=d}else loadEx()}catch(e){loadEx()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function avg(a){a=a.filter(function(v){return v!=null});return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
+function band(v){if(v==null)return[null,NA,"var(--muted)"];var r=Math.round(v);if(r<=20)return[1,BN[0],"var(--b1)"];if(r<=40)return[2,BN[1],"var(--b2)"];if(r<=60)return[3,BN[2],"var(--b3)"];if(r<=80)return[4,BN[3],"var(--b4)"];return[5,BN[4],"var(--b5)"]}
+function sc(id){var v=S.scores[id];return v==null?null:v}
+function subScore(s){return avg(s.ind.map(function(o){return sc(o.id)}))}
+function pScore(p){return avg(p.subs.map(subScore))}
+function oScore(){return avg(DATA.map(pScore))}
+function fmt(v){return v==null?"–":String(Math.round(v))}
+var DOTC=["var(--b1)","var(--b2)","var(--b4)","var(--b5)"];
+
+// legend
+var LG=[["0–20","var(--b1)",BN[0]],["21–40","var(--b2)",BN[1]],["41–60","var(--b3)",BN[2]],["61–80","var(--b4)",BN[3]],["81–100","var(--b5)",BN[4]]];
+$("legend").innerHTML=LG.map(function(g){var a=g[2].split("|");return '<span><i class="dot" style="background:'+g[1]+'"></i><b>'+g[0]+'</b>'+a[0]+'<em>'+a[1]+'</em></span>'}).join("");
+
+var pb=$("pbars"),tabs=$("tabs"),pil=$("pillars");
+DATA.forEach(function(p,i){
+  var d=document.createElement("div");d.className="pb";
+  d.innerHTML='<div class="l"><span>'+bi(p.name)+'</span><span id="pv-'+p.id+'">–</span></div><div class="track"><i id="pf-'+p.id+'"></i><b style="left:20%"></b><b style="left:40%"></b><b style="left:60%"></b><b style="left:80%"></b></div>';
+  pb.appendChild(d);
+  var t=document.createElement("button");t.type="button";t.className="tab";t.id="tab-"+p.id;t.setAttribute("role","tab");
+  t.innerHTML='<span class="nm">'+bi(p.name)+'</span><span class="v" id="tv-'+p.id+'">–</span>';
+  t.onclick=function(){show(i)};tabs.appendChild(t);
+  var sec=document.createElement("section");sec.className="pillar";sec.id="sec-"+p.id;
+  var nm=p.name.split("|"),ds=p.desc.split("|");
+  var h='<div class="phead"><h2>'+nm[0]+'<em class="mg">'+nm[1]+'</em></h2><p>'+ds[0]+'<em class="mg">'+ds[1]+'</em></p></div>';
+  p.subs.forEach(function(s){
+    var sn=s.name.split("|");
+    h+='<div class="sub"><div class="subh"><h3><small>'+s.id+'</small><span>'+sn[0]+'<em class="mg">'+sn[1]+'</em></span></h3><div class="sv"><i class="dot" id="sd-'+s.id+'"></i><span id="sv-'+s.id+'">–</span>/100</div></div>';
+    s.ind.forEach(function(o){
+      var tq=o.t.split("|");
+      h+='<div class="ind" id="r-'+o.id+'" role="radiogroup" aria-labelledby="q-'+o.id+'"><p class="q" id="q-'+o.id+'"><span>'+tq[0]+'<span class="src '+o.src+'">'+o.src+'</span><em class="mg">'+tq[1]+'</em></span><button type="button" class="skip" id="sk-'+o.id+'" title="Effacer la réponse · Fafao ny valiny">Effacer · Fafao</button></p><div class="opts">';
+      o.lv.forEach(function(txt,k){
+        h+='<label class="opt" style="--c:'+DOTC[k]+'"><input type="radio" name="n-'+o.id+'" value="'+LV[k]+'" id="o-'+o.id+'-'+k+'"><span>'+bi(txt)+'</span><span class="sc">'+LV[k]+' pts</span></label>';
+      });
+      h+='</div></div>';
+    });
+    h+='</div>';
+  });
+  sec.innerHTML=h;pil.appendChild(sec);
+});
+function show(i){DATA.forEach(function(p,j){$("sec-"+p.id).hidden=j!==i;$("tab-"+p.id).setAttribute("aria-selected",j===i)})}
+function setScore(id,v){S.scores[id]=v;refresh();save()}
+ALL.forEach(function(o){
+  o.lv.forEach(function(_,k){$("o-"+o.id+"-"+k).onchange=function(){setScore(o.id,LV[k])}});
+  $("sk-"+o.id).onclick=function(){syncOne(o.id,null);setScore(o.id,null)};
+});
+function syncOne(id,v){var o=ALL.filter(function(x){return x.id===id})[0];o.lv.forEach(function(_,k){$("o-"+id+"-"+k).checked=(v!=null&&LV[k]===v)})}
+function syncInputs(){ALL.forEach(function(o){syncOne(o.id,sc(o.id))})}
+function refresh(){
+  var tot=0,done=0;
+  ALL.forEach(function(o){tot++;var v=sc(o.id);if(v!=null)done++;$("sk-"+o.id).hidden=(v==null)});
+  DATA.forEach(function(p){
+    var v=pScore(p),b=band(v);
+    $("pv-"+p.id).textContent=fmt(v);$("tv-"+p.id).textContent=fmt(v);
+    var f=$("pf-"+p.id);f.style.width=(v==null?0:v)+"%";f.style.background=b[2];
+    p.subs.forEach(function(s){var sv=subScore(s),sb=band(sv);$("sv-"+s.id).textContent=fmt(sv);$("sd-"+s.id).style.background=sb[2]});
+  });
+  var o=oScore(),ob=band(o);
+  $("oNum").textContent=fmt(o);
+  $("oBand").innerHTML='<i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span>';
+  $("oCov").textContent=done+" / "+tot+" indicateurs renseignés · navaly";
+  $("exbanner").hidden=!S.examples;
+}
+function summary(){
+  var o=oScore(),l=["Baromètre des piliers de gouvernance","Entité : "+(S.entity||"(non renseignée)"),"Date : "+(S.date||"(non renseignée)"),"Score global : "+fmt(o)+"/100 ("+fr(band(o)[1])+")",""];
+  DATA.forEach(function(p){var v=pScore(p);l.push(fr(p.name)+" : "+fmt(v)+"/100 ("+fr(band(v)[1])+")");p.subs.forEach(function(s){l.push("  "+s.id+" "+fr(s.name)+" : "+fmt(subScore(s))+"/100")})});
+  return l.join("\n");
+}
+$("copy").onclick=function(){
+  var t=summary(),fb=$("fallback");
+  function fall(){fb.value=t;fb.hidden=false;fb.select()}
+  try{navigator.clipboard.writeText(t).then(function(){$("copyT").textContent="Copié";$("copyM").textContent="Voadika";setTimeout(function(){$("copyT").textContent="Copier le résumé";$("copyM").textContent="Adikao ny famintinana"},1500)},fall)}catch(e){fall()}
+};
+$("reset").onclick=function(){$("confirm").hidden=false};
+$("no").onclick=function(){$("confirm").hidden=true};
+function wipe(){S.scores={};S.examples=false;syncInputs();refresh();save()}
+$("yes").onclick=function(){$("confirm").hidden=true;wipe()};
+$("clearEx").onclick=wipe;
+$("entity").value=S.entity||"";$("adate").value=S.date||"";
+$("entity").oninput=function(e){S.entity=e.target.value;save()};
+$("adate").oninput=function(e){S.date=e.target.value;save()};
+
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function buildReport(){
+  var o=oScore(),ob=band(o),tot=ALL.length,done=ALL.filter(function(x){return sc(x.id)!=null}).length;
+  var h='<header class="rp-head"><div class="rp-kick">Rapport d\'évaluation · Tatitra fanombanana</div>'+
+    '<h1>Indice du Baromètre de Gouvernance Locale<em class="mg">Tondro ny Barômetra momba ny fitantanana eo an-toerana</em></h1>'+
+    '<dl class="rp-meta"><div><dt>Entité évaluée · Toerana tombanana</dt><dd>'+esc(S.entity||"—")+'</dd></div>'+
+    '<div><dt>Date · Daty</dt><dd>'+esc(S.date||"—")+'</dd></div>'+
+    '<div><dt>Renseignés · Navaly</dt><dd>'+done+' / '+tot+'</dd></div></dl>'+
+    (S.examples?'<div class="rp-ex">Réponses d\'exemple, ne pas utiliser comme résultat réel.<em class="mg">Valiny ohatra, tsy azo ampiasaina ho vokatra marina.</em></div>':'')+
+    '</header>';
+  h+='<section class="rp-overall"><div class="rp-big"><b>'+fmt(o)+'</b><span>/100</span></div><div class="rp-bnd"><i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span></div></section>';
+  h+='<table class="rp-t rp-sum"><thead><tr><th>Pilier · Andry</th><th class="b"></th><th class="s">Score</th><th>Niveau · Haavo</th></tr></thead><tbody>';
+  DATA.forEach(function(p){var v=pScore(p),b=band(v);
+    h+='<tr><td>'+bi(p.name)+'</td><td class="b"><div class="rp-bar"><i style="width:'+(v==null?0:v)+'%;background:'+b[2]+'"></i></div></td><td class="s">'+fmt(v)+'</td><td>'+bi(b[1])+'</td></tr>'});
+  h+='</tbody></table>';
+  h+='<div class="rp-foot"><div>Échelle : 0–20 Critique · 21–40 Faible · 41–60 Moyen · 61–80 Bon · 81–100 Très bon. Les quatre réponses de chaque indicateur valent 0, 33, 67 et 100 points. Sous-critère = moyenne de ses indicateurs renseignés ; pilier = moyenne de ses sous-critères ; score global = moyenne des cinq piliers.<em class="mg">Fenitra: 0–20 Ratsy be · 21–40 Malemy · 41–60 Antonony · 61–80 Tsara · 81–100 Tsara be. Ny valiny efatra isaky ny famantarana dia mitentina 0, 33, 67 ary 100.</em></div></div>';
+  DATA.forEach(function(p){
+    var nm=p.name.split("|"),ds=p.desc.split("|");
+    h+='<section class="rp-pillar"><h2>'+nm[0]+' · '+fmt(pScore(p))+'/100<em class="mg">'+nm[1]+'</em></h2><p>'+ds[0]+'<em class="mg">'+ds[1]+'</em></p>';
+    p.subs.forEach(function(s){
+      var sv=subScore(s),sb=band(sv),sn=s.name.split("|");
+      h+='<div class="rp-sub"><div class="rp-subh"><span><small>'+s.id+'</small>'+sn[0]+'</span><span class="sc"><i class="dot" style="background:'+sb[2]+'"></i>'+fmt(sv)+'/100</span></div>'+
+        '<table class="rp-t"><tbody>';
+      s.ind.forEach(function(x){
+        var v=sc(x.id),tq=x.t.split("|"),ans='<span class="rp-na">Non renseigné<em class="mg">Tsy navaly</em></span>';
+        if(v!=null){var k=LV.indexOf(v);ans=k>=0?bi(x.lv[k]):String(v)}
+        h+='<tr><td class="n">'+x.id+'</td><td>'+tq[0]+'<em class="mg">'+tq[1]+'</em></td><td class="ans">'+ans+'</td><td class="s">'+(v==null?"–":v)+'</td></tr>';
+      });
+      h+='</tbody></table></div>';
+    });
+    h+='</section>';
+  });
+  h+='<div class="rp-foot"><div>Sources du cadre : Guide du Good Governance Barometer (FHI 360 / USAID, 2015) ; Brillantes (2001) ; Manasan, Gonzales et Gaffud (1999). Les niveaux de réponse sont une première version à valider avec chaque communauté.</div>'+
+    '<div class="rp-sign"><div>Animateur / facilitateur<em class="mg">Mpanampy</em></div><div>Représentant de la commune<em class="mg">Solontenan\'ny kaominina</em></div><div>Représentant de la société civile<em class="mg">Solontenan\'ny fiarahamonina sivily</em></div></div></div>';
+  $("report").innerHTML=h;
+}
+$("print").onclick=function(){buildReport();window.print()};
+window.addEventListener("beforeprint",buildReport);
+syncInputs();refresh();show(0);
+</script>
+</body>
+</html>
