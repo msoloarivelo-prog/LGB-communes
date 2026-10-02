@@ -94,6 +94,14 @@ button:hover{border-color:var(--accent)}
 .hmid .ho{margin-top:12px;display:inline-flex;align-items:baseline;gap:8px;font:600 .95rem var(--f-data)}
 .hmid .ho b{font:700 2.4rem 'Josefin Sans',sans-serif}
 @media (max-width:760px){.hub{padding:20px 12px}.hub-frame{padding:0 10px}.hub-row.r2,.hub-row.r3{grid-template-columns:minmax(0,1fr)}.hcard{min-height:130px}.hub-frame::before{top:10%;bottom:10%}}
+.side{position:static!important}
+.cta{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px}
+.cta figure{margin:0;text-align:center}.cta svg{width:210px;height:210px;display:block;margin:0 auto}
+.cta .rp-pill{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:999px;background:#1B2B3A;color:#fff;font:600 12px var(--f-body);letter-spacing:.04em}
+.ctat{flex:1;min-width:240px;display:flex;flex-direction:column;gap:12px}.ctat h2{margin:0}.ctat h2 .mg{font-family:var(--f-body);font-size:.55em}.ctat p{margin:0;color:var(--muted)}
+.ctat .row{display:flex;gap:8px;flex-wrap:wrap}
+.tbar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:14px}
+.tbar .te{font-weight:600;flex:1;min-width:120px}.tbar .ts{font:500 13px var(--f-data)}.tbar .ts b{font:700 1.5rem var(--f-display)}.tbar .tp{font:12px var(--f-data);color:var(--muted)}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
 .tab{flex:none;display:flex;gap:10px;align-items:center;padding:8px 13px;border-radius:8px;border:1px solid var(--line);background:var(--surface);max-width:230px}
 .tab .nm{display:block;min-width:0;white-space:normal;line-height:1.25}
@@ -263,6 +271,7 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
 <body>
 
 <div class="wrap">
+  <div id="pg-dash">
   <header class="top">
     <div>
       <h1>Indice du Baromètre de Gouvernance Locale<em class="mg">Tondro ny Barômetra momba ny fitantanana eo an-toerana</em></h1>
@@ -310,6 +319,28 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
       <textarea id="fallback" hidden readonly aria-label="Résumé"></textarea>
     </aside>
 
+    <section class="cta" id="cta">
+      <figure id="ctaG"></figure>
+      <div class="ctat">
+        <h2>Évaluation<em class="mg">Fanombanana</em></h2>
+        <p id="ctaP"></p>
+        <div class="row">
+          <button type="button" id="go" class="primary"><span id="goT">Commencer l'évaluation</span><em class="mg" id="goM">Hanomboka ny fanombanana</em></button>
+          <button type="button" id="goPlan">Plan d'action<em class="mg">Drafitra hetsika</em></button>
+        </div>
+      </div>
+    </section>
+  </div>
+  </div>
+
+  <div id="pg-tool" hidden>
+    <div class="tbar">
+      <button type="button" id="back">← Tableau de bord<em class="mg">Tabilao</em></button>
+      <span class="te" id="tEnt"></span>
+      <span class="ts"><b id="tNum">–</b>/100 <span id="tBand"></span></span>
+      <span class="tp" id="tProg"></span>
+      <button type="button" id="print2" class="primary">Imprimer / PDF<em class="mg">Hanonta / PDF</em></button>
+    </div>
     <main>
       <div class="tabs" role="tablist" id="tabs"></div>
       <div id="pillars"></div>
@@ -901,7 +932,7 @@ DATA.forEach(function(p,i){
   var b=document.createElement("button");b.type="button";b.className="hcard";b.id="hc-"+p.id;b.setAttribute("aria-pressed","false");
   var nm=p.name.split("|"),ds=p.desc.split("|");
   b.innerHTML='<h3>'+nm[0]+'</h3><div class="hd">'+ds[0]+'<em class="mg">'+ds[1]+'</em></div><div class="hs"><i id="hi-'+p.id+'"></i><b id="hv-'+p.id+'">–</b><span>/100 · <span id="hl-'+p.id+'"></span></span></div>';
-  b.onclick=function(){show(i);var t=$("sec-"+p.id);if(t&&t.scrollIntoView)t.scrollIntoView({behavior:"smooth",block:"start"})};
+  b.onclick=function(){show(i);location.hash="#outil"};
   $(i<2?"hub-top":"hub-bot").appendChild(b);
 });
 $("hub-mid").innerHTML='<h2>Baromètre de gouvernance locale</h2><p>Cinq piliers, 22 sous-critères et 68 indicateurs aident la commune à mesurer sa gouvernance, à repérer ses points faibles et à préparer son plan de changement. Choisissez un pilier pour répondre.<em class="mg">Andry dimy, sampana 22 ary famantarana 68 no manampy ny kaominina handrefy ny fitantanany, hamantatra ny tsy fahampiana ary hanomana ny drafitra fanovana. Fidio ny andry iray hamaly.</em></p><div class="ho"><b id="hov">–</b><span>/100 · <span id="hol"></span></span></div>';
@@ -916,6 +947,10 @@ function refresh(){
     p.subs.forEach(function(s){var sv=subScore(s),sb=band(sv);$("sv-"+s.id).textContent=fmt(sv);$("sd-"+s.id).style.background=sb[2]});
   });
   var o=oScore(),ob=band(o);
+  $("ctaG").innerHTML=gauge(o,210,"Score global");
+  $("tNum").textContent=fmt(o);$("tBand").textContent=fr(ob[1]);$("tProg").textContent=done+" / "+tot+" indicateurs";$("tEnt").textContent=$("entity").value||"—";
+  $("ctaP").textContent=done+" / "+tot+" indicateurs renseignés · "+planStats().n+" actions au plan.";
+  $("goT").textContent=done>0?"Reprendre l'évaluation":"Commencer l'évaluation";$("goM").textContent=done>0?"Hanohy ny fanombanana":"Hanomboka ny fanombanana";
   $("oNum").textContent=fmt(o);$("hov").textContent=fmt(o);$("hol").textContent=fr(ob[1]);
   $("oBand").innerHTML='<i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span>';
   $("oCov").textContent=done+" / "+tot+" indicateurs renseignés · navaly";
@@ -1007,9 +1042,16 @@ function buildReport(){
     '<div class="rp-sign"><div>Animateur / facilitateur<em class="mg">Mpanampy</em></div><div>Représentant de la commune<em class="mg">Solontenan\'ny kaominina</em></div><div>Représentant de la société civile<em class="mg">Solontenan\'ny fiarahamonina sivily</em></div></div></div>';
   $("report").innerHTML=h;
 }
-$("print").onclick=function(){buildReport();window.print()};
+function pr(){buildReport();window.print()}
+$("print").onclick=pr;$("print2").onclick=pr;
+function route(){var t=location.hash==="#outil";$("pg-dash").hidden=t;$("pg-tool").hidden=!t;window.scrollTo(0,0)}
+window.addEventListener("hashchange",route);
+$("go").onclick=function(){location.hash="#outil"};
+$("goPlan").onclick=function(){show("plan");location.hash="#outil"};
+$("back").onclick=function(){location.hash="#tableau"};
+$("entity").addEventListener("input",function(){$("tEnt").textContent=this.value||"—"});
 window.addEventListener("beforeprint",buildReport);
-syncInputs();refresh();show(0);
+syncInputs();refresh();show(0);route();
 </script>
 </body>
 </html>
