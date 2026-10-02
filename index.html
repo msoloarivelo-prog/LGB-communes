@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Local Governance Barometer Index</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 /* Layout: sticky roll-up column on the left (overall score + five pillar bars), pillar tabs and indicator cards on the right; stacks on phones. French is the main line, Malagasy sits below it in italic. */
 :root{
@@ -69,6 +69,31 @@ button:hover{border-color:var(--accent)}
 .legend b{font:500 10px var(--f-data)}
 .side .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 #fallback{width:100%;min-height:150px;font:12px var(--f-data);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}
+.hub{margin:0 0 22px;padding:36px 22px;border-radius:12px;background:
+ repeating-linear-gradient(90deg,rgba(23,53,58,.07) 0 46px,rgba(255,255,255,.05) 46px 92px),
+ linear-gradient(180deg,#9CCBCD 0%,#6FA7AB 55%,#5C979C 100%);font-family:'Josefin Sans',var(--f-body),sans-serif}
+.hub-frame{position:relative;display:flex;flex-direction:column;gap:22px;padding:0 26px}
+.hub-frame::before{content:"";position:absolute;left:0;right:0;top:20%;bottom:20%;border:5px solid #FFF3DF;border-radius:2px}
+.hub-row{position:relative;display:grid;gap:22px}
+.hub-row.r2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.hub-row.r3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hcard{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:168px;padding:22px 20px;border:0;border-radius:2px;background:#17353A;color:#FFF3DF;text-align:center;cursor:pointer;font:inherit;transition:transform .15s,box-shadow .15s}
+.hcard:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(10,30,34,.35)}
+.hcard:focus-visible{outline:3px solid #FFF3DF;outline-offset:3px}
+.hcard[aria-pressed=true]{box-shadow:inset 0 -5px 0 var(--hc,#8CC6C8)}
+.hcard h3{margin:0;font:700 1.15rem 'Josefin Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#8CC6C8}
+.hcard .hd{font-size:.88rem;letter-spacing:.06em;line-height:1.5;color:#FFF3DF;max-width:34ch}
+.hcard .hd .mg{display:block;font-style:italic;opacity:.72;font-size:.82rem;letter-spacing:.04em;margin-top:2px}
+.hcard .hs{margin-top:4px;display:flex;align-items:center;gap:8px;font:500 .85rem var(--f-data);letter-spacing:.05em}
+.hcard .hs i{width:10px;height:10px;border-radius:50%;background:var(--hc,#8CC6C8);box-shadow:0 0 0 2px rgba(255,243,223,.5)}
+.hcard .hs b{font-size:1.35rem;font-family:'Josefin Sans',sans-serif}
+.hmid{position:relative;padding:26px 28px;background:#FFF3DF;color:#17353A;text-align:center;border-radius:2px}
+.hmid h2{margin:0 0 10px;font:700 1.2rem 'Josefin Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase}
+.hmid p{margin:0 auto;max-width:70ch;font-size:.92rem;line-height:1.6;letter-spacing:.03em}
+.hmid p .mg{display:block;font-style:italic;opacity:.75}
+.hmid .ho{margin-top:12px;display:inline-flex;align-items:baseline;gap:8px;font:600 .95rem var(--f-data)}
+.hmid .ho b{font:700 2.4rem 'Josefin Sans',sans-serif}
+@media (max-width:760px){.hub{padding:20px 12px}.hub-frame{padding:0 10px}.hub-row.r2,.hub-row.r3{grid-template-columns:minmax(0,1fr)}.hcard{min-height:130px}.hub-frame::before{top:10%;bottom:10%}}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
 .tab{flex:none;display:flex;gap:10px;align-items:center;padding:8px 13px;border-radius:8px;border:1px solid var(--line);background:var(--surface);max-width:230px}
 .tab .nm{display:block;min-width:0;white-space:normal;line-height:1.25}
@@ -255,6 +280,12 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
       <em class="mg">Nisy valiny ohatra napetraka mba hanehoana ny fanisana. Fafao alohan'ny hanombanana tena toerana.</em></span>
     <button type="button" id="clearEx" class="primary">Effacer les exemples<em class="mg">Hamafa ny ohatra</em></button>
   </div>
+
+  <section class="hub" id="hub" aria-label="Piliers de la gouvernance"><div class="hub-frame">
+    <div class="hub-row r2" id="hub-top"></div>
+    <div class="hmid" id="hub-mid"></div>
+    <div class="hub-row r3" id="hub-bot"></div>
+  </div></section>
 
   <div class="grid">
     <aside class="side" aria-label="Résultat global">
@@ -856,7 +887,7 @@ psec.addEventListener("click",function(e){
     else{var id=b.getAttribute("data-aid");S.actions=S.actions.filter(function(a){return a.id!==id});save();renderPlan()}
   }
 });
-function show(i){DATA.forEach(function(p,j){$("sec-"+p.id).hidden=j!==i;$("tab-"+p.id).setAttribute("aria-selected",j===i)});
+function show(i){DATA.forEach(function(p,j){$("sec-"+p.id).hidden=j!==i;$("tab-"+p.id).setAttribute("aria-selected",j===i);$("hc-"+p.id).setAttribute("aria-pressed",j===i)});
   $("sec-plan").hidden=i!=="plan";$("tab-plan").setAttribute("aria-selected",i==="plan");if(i==="plan")renderPlan()}
 function setScore(id,v){S.scores[id]=v;refresh();save()}
 ALL.forEach(function(o){
@@ -865,17 +896,27 @@ ALL.forEach(function(o){
 });
 function syncOne(id,v){var o=ALL.filter(function(x){return x.id===id})[0];o.lv.forEach(function(_,k){$("o-"+id+"-"+k).checked=(v!=null&&LV[k]===v)})}
 function syncInputs(){ALL.forEach(function(o){syncOne(o.id,sc(o.id))})}
+var HUBC=["E","R","A","Q","P"];
+DATA.forEach(function(p,i){
+  var b=document.createElement("button");b.type="button";b.className="hcard";b.id="hc-"+p.id;b.setAttribute("aria-pressed","false");
+  var nm=p.name.split("|"),ds=p.desc.split("|");
+  b.innerHTML='<h3>'+nm[0]+'</h3><div class="hd">'+ds[0]+'<em class="mg">'+ds[1]+'</em></div><div class="hs"><i id="hi-'+p.id+'"></i><b id="hv-'+p.id+'">–</b><span>/100 · <span id="hl-'+p.id+'"></span></span></div>';
+  b.onclick=function(){show(i);var t=$("sec-"+p.id);if(t&&t.scrollIntoView)t.scrollIntoView({behavior:"smooth",block:"start"})};
+  $(i<2?"hub-top":"hub-bot").appendChild(b);
+});
+$("hub-mid").innerHTML='<h2>Baromètre de gouvernance locale</h2><p>Cinq piliers, 22 sous-critères et 68 indicateurs aident la commune à mesurer sa gouvernance, à repérer ses points faibles et à préparer son plan de changement. Choisissez un pilier pour répondre.<em class="mg">Andry dimy, sampana 22 ary famantarana 68 no manampy ny kaominina handrefy ny fitantanany, hamantatra ny tsy fahampiana ary hanomana ny drafitra fanovana. Fidio ny andry iray hamaly.</em></p><div class="ho"><b id="hov">–</b><span>/100 · <span id="hol"></span></span></div>';
 function refresh(){
   var tot=0,done=0;
   ALL.forEach(function(o){tot++;var v=sc(o.id);if(v!=null)done++;$("sk-"+o.id).hidden=(v==null)});
   DATA.forEach(function(p){
     var v=pScore(p),b=band(v);
     $("pv-"+p.id).textContent=fmt(v);$("tv-"+p.id).textContent=fmt(v);
+    $("hv-"+p.id).textContent=fmt(v);$("hl-"+p.id).textContent=fr(b[1]);$("hi-"+p.id).style.setProperty("background",b[2]);$("hc-"+p.id).style.setProperty("--hc",b[2]);
     var f=$("pf-"+p.id);f.style.width=(v==null?0:v)+"%";f.style.background=b[2];
     p.subs.forEach(function(s){var sv=subScore(s),sb=band(sv);$("sv-"+s.id).textContent=fmt(sv);$("sd-"+s.id).style.background=sb[2]});
   });
   var o=oScore(),ob=band(o);
-  $("oNum").textContent=fmt(o);
+  $("oNum").textContent=fmt(o);$("hov").textContent=fmt(o);$("hol").textContent=fr(ob[1]);
   $("oBand").innerHTML='<i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span>';
   $("oCov").textContent=done+" / "+tot+" indicateurs renseignés · navaly";
   $("exbanner").hidden=!S.examples;planNote();
@@ -899,10 +940,12 @@ $("entity").value=S.entity||"";$("adate").value=S.date||"";
 $("entity").oninput=function(e){S.entity=e.target.value;save()};
 $("adate").oninput=function(e){S.date=e.target.value;save()};
 
+var RAMP=[[0,[179,38,30]],[25,[200,101,27]],[50,[212,169,15]],[75,[94,155,58]],[100,[14,122,90]]];
+function ramp(x){for(var k=1;k<RAMP.length;k++){if(x<=RAMP[k][0]){var a=RAMP[k-1],b=RAMP[k],t=(x-a[0])/(b[0]-a[0]);return "rgb("+[0,1,2].map(function(c){return Math.round(a[1][c]+(b[1][c]-a[1][c])*t)}).join(",")+")"}}return "rgb(14,122,90)"}
 function gauge(v,size,cap){
   var N=40,R1=0.70,R2=0.97,c=size/2,f=v==null?0:Math.round(v/100*N),b=band(v),col=b[2],sw=size*0.026,o="";
   for(var i=0;i<N;i++){var a=(-90+i*360/N)*Math.PI/180,x1=c+Math.cos(a)*c*R1,y1=c+Math.sin(a)*c*R1,x2=c+Math.cos(a)*c*R2,y2=c+Math.sin(a)*c*R2,on=i<f;
-    o+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+(on?col:"#D5DDE0")+'" stroke-opacity="'+(on?(0.4+0.6*(i+1)/Math.max(f,1)).toFixed(2):1)+'" stroke-width="'+sw.toFixed(1)+'" stroke-linecap="round"/>'}
+    o+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+(on?ramp((i+0.5)/N*100):"#D5DDE0")+'" stroke-width="'+sw.toFixed(1)+'" stroke-linecap="round"/>'}
   var fs=size*0.27;
   o+='<text x="'+c+'" y="'+(c+fs*0.12)+'" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-weight="600" font-size="'+fs.toFixed(0)+'" fill="'+col+'">'+fmt(v)+'</text>'+
      '<line x1="'+(c-size*0.17)+'" x2="'+(c+size*0.17)+'" y1="'+(c+fs*0.38)+'" y2="'+(c+fs*0.38)+'" stroke="#9AA7A3" stroke-width="1"/>'+
