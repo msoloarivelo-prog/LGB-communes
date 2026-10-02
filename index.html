@@ -34,7 +34,7 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.1
 .meta{display:flex;flex-wrap:wrap;gap:10px}
 .meta label{display:flex;flex-direction:column;gap:3px;font:500 11px var(--f-data);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .meta label .mg{font:italic 400 11px var(--f-body);text-transform:none;letter-spacing:0}
-input[type=text],input[type=date]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+input[type=text],input[type=date],input[type=number]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
 input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:14px}
 .banner[hidden]{display:none!important}
@@ -111,6 +111,57 @@ button:hover{border-color:var(--accent)}
 .foot b{font-family:var(--f-data);font-weight:500;color:var(--ink)}
 .foot .mg{font-size:12px}
 
+
+/* Action plan tab */
+select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0;width:100%}
+textarea{resize:vertical;min-height:58px;line-height:1.4}
+select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.plan{display:flex;flex-direction:column;gap:18px}
+.plan .intro{margin:6px 0 0;max-width:66ch;font-size:14px}
+.blk{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.blkh{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;padding:11px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.blkh h3{font-size:1.02rem}
+.blkh h3 .mg{font-family:var(--f-body);font-size:.8em}
+.wk{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.wk:first-of-type{border-top:0}
+.wk .id{font:500 12px var(--f-data);color:var(--muted)}
+.wk .ans{font-size:12.5px;color:var(--muted);display:flex;gap:7px;align-items:center;margin-top:2px}
+.wk .ans b{font:500 11px var(--f-data);color:var(--ink)}
+.wk button{white-space:nowrap}
+.wk button[disabled]{opacity:.6;cursor:default;border-color:var(--line)}
+.empty{padding:16px 14px;color:var(--muted);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--surface);padding:10px 14px}
+.stat b{display:block;font:600 1.25rem var(--f-display);font-variant-numeric:tabular-nums}
+.stat span{font:400 11.5px var(--f-body);color:var(--muted);line-height:1.3;display:block}
+.pbar{height:6px;background:var(--soft);border-radius:2px;margin-top:6px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--accent);width:0}
+.acard{padding:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.acard:first-of-type{border-top:0}
+.ahead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.ahead .tt{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.ahead .tt input{font-weight:600;width:100%}
+.alink{font-size:12px;color:var(--muted)}
+.alink b{font:500 11px var(--f-data);color:var(--ink);margin-right:6px}
+.alink .mg{font-size:11.5px}
+.sg{font-size:12px;color:var(--muted)}
+.afields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+@media (max-width:640px){.afields{grid-template-columns:minmax(0,1fr)}}
+.acard .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.acard .f>span{font:500 12px var(--f-body)}
+.acard .f>span .mg{font-size:11px}
+.afields .wide{grid-column:1/-1}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px}
+@media (max-width:640px){.row3{grid-template-columns:minmax(0,1fr)}}
+.sp{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+.addrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.follow{padding:14px;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+@media (max-width:640px){.follow{grid-template-columns:minmax(0,1fr)}}
+.follow .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.follow .f>span{font:500 12px var(--f-body)}
+.follow .f>span .mg{font-size:11px}
+
 /* Print report (A4). The on-screen app is hidden and #report is shown. */
 #report{display:none}
 .rp-bar{height:8px;background:#E3EBE7;border-radius:2px;overflow:hidden}
@@ -155,6 +206,14 @@ button:hover{border-color:var(--accent)}
   .rp-subh small{font:500 8.5pt var(--f-data);color:var(--muted);margin-right:6pt}
   .rp-subh .sc{font:600 10pt var(--f-data);display:flex;gap:5pt;align-items:center}
   .rp-na{color:var(--muted)}
+
+  .rp-plan td.who{width:24%}
+  .rp-plan td.when{width:19%;font-size:9pt}
+  .rp-plan .tag{font:500 7.5pt var(--f-data);color:var(--muted)}
+  .rp-plan b{font-weight:600}
+  .rp-plan .mg{font-size:8pt}
+  .rp-stats{display:flex;gap:22pt;margin:6pt 0 4pt;font-size:9.5pt}
+  .rp-stats b{font:600 13pt var(--f-display);display:block}
   .rp-foot{margin-top:16pt;padding-top:8pt;border-top:1pt solid var(--line);font-size:8.5pt;color:var(--muted);break-inside:avoid}
   .rp-foot .mg{font-size:8pt}
   .rp-sign{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18pt;margin-top:22pt;break-inside:avoid}
@@ -190,6 +249,7 @@ button:hover{border-color:var(--accent)}
         <div class="overall"><span class="num" id="oNum">–</span><span class="pct">/100</span></div>
         <div class="band" id="oBand"></div>
         <div class="cov" id="oCov"></div>
+        <div class="cov" id="oPlan"></div>
       </div>
       <div class="pbars" id="pbars"></div>
       <div class="legend" id="legend" aria-label="Échelle"></div>
@@ -602,11 +662,43 @@ var DATA=[
 ]}
 ];
 var ALL=[];DATA.forEach(function(p){p.subs.forEach(function(s){s.ind=s.ind.map(function(r,i){var o={id:s.id+"."+(i+1),t:r[0],src:r[1],lv:r[2]};ALL.push(o);return o})})});
+
+var SUG={
+"1.1":"Élaborer ou actualiser le plan de développement avec la communauté, avec des objectifs chiffrés et datés|Manao na manavao ny drafitra fampandrosoana niaraka amin'ny vondrom-piarahamonina, misy tanjona voaisa sy misy daty",
+"1.2":"Tenir un registre des biens, suivre le budget chaque trimestre et publier les rapports financiers|Mitazona rejistra ny fananana, manara-maso ny teti-bola isaky ny telovolana ary mamoaka ny tatitra ara-bola",
+"1.3":"Créer un point d'information à jour et clarifier les rôles et les procédures de la commune|Mamorona toerana fampahafantarana vaovao sy mampazava ny andraikitra sy ny fombafomba ao amin'ny kaominina",
+"1.4":"Faire une enquête annuelle de satisfaction et fixer des normes pour les services de base|Manao fanadihadiana isan-taona momba ny fahafaham-po ary mametraka fenitra ho an'ny tolotra fototra",
+"1.5":"Former les élus et le personnel et partager la vision de la commune|Mampiofana ny mpikambana voafidy sy ny mpiasa ary mizara ny fahitana ny kaominina",
+"2.1":"Rédiger ou actualiser les règlements locaux et reconnaître les règles coutumières|Manoratra na manavao ny lalàna eo an-toerana ary manaiky ny lalàna nentim-paharazana",
+"2.2":"Afficher les procédures et suivre l'application des règlements|Mametraka ny fombafomba eo amin'ny toerana ahitan'ny olona ary manara-maso ny fampiharana ny lalàna",
+"2.3":"Mettre en place ou renforcer un organe local de médiation et informer les citoyens|Mametraka na mampahery vondrona eo an-toerana mpampihavana ary mampahafantatra ny olom-pirenena",
+"2.4":"Adopter des règles ouvertes pour les marchés et désigner un point focal anti-corruption|Mandray fitsipika misokatra amin'ny tolo-bidy ary mametraka olona iray miady amin'ny kolikoly",
+"3.1":"Afficher les rapports et le budget et tenir des assemblées citoyennes dans chaque communauté|Mametraka ny tatitra sy ny teti-bola ary manao fivoriamben'ny olom-pirenena isaky ny vondrom-piarahamonina",
+"3.2":"Clarifier les rôles de l'exécutif et du conseil et publier les audits|Mampazava ny andraikitry ny mpanatanteraka sy ny filan-kevitra ary mamoaka ny fanaraha-maso ara-bola",
+"3.3":"Créer un guichet de plaintes ou un comité de recours avec des délais de réponse|Mamorona birao fitarainana na komitin'ny fandinihana misy fe-potoana famaliana",
+"3.4":"Fixer des délais de réponse aux demandes et visiter régulièrement les communautés|Mametraka fe-potoana famaliana ny fangatahana ary mitsidika tsy tapaka ny vondrom-piarahamonina",
+"3.5":"Instaurer l'évaluation du personnel, un code d'éthique et des déclarations de patrimoine|Mametraka fanombanana ny mpiasa, fitsipi-pitondrantena ary fanambarana ny fananana",
+"5.1":"Intégrer la non-discrimination et l'égalité de genre dans les règlements et le budget|Ampidirina ao amin'ny lalàna sy ny teti-bola ny fanoherana ny fanavakavahana sy ny fitoviana lahy sy vavy",
+"5.2":"Donner la priorité aux communautés les moins desservies dans le budget des services de base|Omena laharam-pahamehana ny vondrom-piarahamonina tsy dia voatolotra amin'ny teti-bola ho an'ny tolotra fototra",
+"5.3":"Garantir la place des femmes, des jeunes et des minorités dans les comités et conseils|Manome toerana ny vehivavy, ny tanora ary ny vitsy an'isa ao amin'ny komity sy filan-kevitra",
+"5.4":"Réserver des fonds à la réduction de la pauvreté et clarifier les règles foncières|Manokana vola hampihenana ny fahantrana ary mampazava ny lalàna momba ny tany",
+"5.5":"Mettre à jour la carte de la pauvreté et lancer des programmes de moyens d'existence ciblés|Manavao ny sarintany ny fahantrana ary manomboka programa fanampiana ny fivelomana kendrena",
+"4.1":"Relancer le comité local de développement avec la société civile et des règles de participation|Mamelona indray ny komity eo an-toerana misahana ny fampandrosoana miaraka amin'ny fiarahamonina sivily ary mametraka lalàna fandraisana anjara",
+"4.2":"Organiser des consultations régulières incluant les femmes et les jeunes|Manao fakan-kevitra tsy tapaka ahitana ny vehivavy sy ny tanora",
+"4.3":"Tenir à jour la liste des organisations de la société civile et signer des accords de collaboration pour les services|Mitazona lisitry ny fikambanana ao amin'ny fiarahamonina sivily ary manao fifanarahana fiaraha-miasa amin'ny tolotra"
+};
+var AXES=["Communication|Fifandraisana","Renforcement des capacités|Fanamafisana ny fahaizana","Dialogue social|Fifanakalozan-kevitra ara-tsosialy","Appui institutionnel|Fanohanana ara-drafitra","Outils et mécanismes de gouvernance|Fitaovana sy rafitra fitantanana"];
+var PR=["Haute|Avo","Moyenne|Antonony","Basse|Ambany"];
+var ST=["À faire|Tsy mbola natomboka","En cours|Mandeha","Terminé|Vita"];
+var HZ=["Court terme (6–12 mois)|Fohy","Long terme (2–3 ans)|Maharitra"];
 var KEY="gpb-v2";
-var S={entity:"",date:"",examples:true,scores:{}};
+var S={entity:"",date:"",examples:true,scores:{},actions:[],team:"",next:""};
 function ex(id){var h=0;for(var i=0;i<id.length;i++)h=(h*31+id.charCodeAt(i))%97;return LV[[1,2,0,3,2,1,2,3][h%8]]}
-function loadEx(){S.scores={};ALL.forEach(function(o){S.scores[o.id]=ex(o.id)});S.examples=true}
+function loadEx(){S.scores={};ALL.forEach(function(o){S.scores[o.id]=ex(o.id)});S.examples=true;
+  S.actions=[];var w=ALL.filter(function(o){return S.scores[o.id]<=33}).slice(0,2);
+  w.forEach(function(o,i){var a=mkAction(o.id,true);a.cause=i?"Pas de budget prévu":"Manque de formation";a.result=i?"Mécanisme en place":"Équipe formée";a.resp="Maire";a.partners="ONG locale";a.due="2027-06-30";a.budget=i?2000000:1500000;S.actions.push(a)})}
 try{var raw=localStorage.getItem(KEY);if(raw){var d=JSON.parse(raw);if(d&&d.scores)S=d}else loadEx()}catch(e){loadEx()}
+if(!S.actions)S.actions=[];if(S.team==null)S.team="";if(S.next==null)S.next="";
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function $(i){return document.getElementById(i)}
 function avg(a){a=a.filter(function(v){return v!=null});return a.length?a.reduce(function(x,y){return x+y},0)/a.length:null}
@@ -648,7 +740,111 @@ DATA.forEach(function(p,i){
   });
   sec.innerHTML=h;pil.appendChild(sec);
 });
-function show(i){DATA.forEach(function(p,j){$("sec-"+p.id).hidden=j!==i;$("tab-"+p.id).setAttribute("aria-selected",j===i)})}
+
+var pt=document.createElement("button");pt.type="button";pt.className="tab";pt.id="tab-plan";pt.setAttribute("role","tab");
+pt.innerHTML='<span class="nm">'+bi("Plan d'action|Drafitra hetsika")+'</span><span class="v" id="tv-plan">0</span>';
+pt.onclick=function(){show("plan")};tabs.appendChild(pt);
+var psec=document.createElement("section");psec.className="pillar plan";psec.id="sec-plan";psec.hidden=true;pil.appendChild(psec);
+
+function esc(t){return String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function oBy(id){return ALL.filter(function(x){return x.id===id})[0]||null}
+function sugOf(id){return SUG[id.split(".").slice(0,2).join(".")]||null}
+function uid(){return "a"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function mkAction(indId,isEx){
+  var sg=indId?sugOf(indId):null,v=indId?sc(indId):null;
+  return {id:uid(),ind:indId||"",title:sg?sg.split("|")[0]:"",cause:"",result:"",axis:0,resp:"",partners:"",horizon:0,due:"",budget:"",prio:(v===0?0:1),status:0,ex:!!isEx};
+}
+function money(n){return n===""||n==null||isNaN(+n)?"–":String(Math.round(+n)).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" Ar"}
+function planStats(){
+  var a=S.actions,n=a.length,done=a.filter(function(x){return x.status===2}).length,run=a.filter(function(x){return x.status===1}).length;
+  var bud=a.reduce(function(t,x){return t+(+x.budget||0)},0);
+  return {n:n,done:done,run:run,pct:n?Math.round(done*100/n):0,bud:bud,short:a.filter(function(x){return x.horizon===0}).length,long:a.filter(function(x){return x.horizon===1}).length};
+}
+function planNote(){var t=planStats();$("tv-plan").textContent=t.n;
+  $("oPlan").textContent=t.n?("Plan d'action : "+t.n+" action"+(t.n>1?"s":"")+" · "+t.pct+" % terminées · Hetsika "+t.n):"Plan d'action : aucune action · Tsy misy hetsika"}
+function opts(list,cur){return list.map(function(o,i){var t=o.split("|");return `<option value="${i}"${cur===i?" selected":""}>${t[0]} · ${t[1]}</option>`}).join("")}
+function fld(label,inner,cls){return `<label class="f ${cls||""}"><span>${bi(label)}</span>${inner}</label>`}
+function planWeak(){
+  var w=ALL.filter(function(o){var v=sc(o.id);return v!=null&&v<=33}).sort(function(x,y){return sc(x.id)-sc(y.id)});
+  return w;
+}
+function renderPlan(){
+  var t=planStats(),weak=planWeak(),h="";
+  h+=`<div class="phead"><h2>Plan d'action de changement<em class="mg">Drafitra hetsika fanovana</em></h2>
+   <p class="intro">Transformez les faiblesses relevées en actions : qui fait quoi, avec qui, pour quand et avec quel budget. Le groupe suit ensuite l'avancement et refait la mesure après un an.<em class="mg">Avadio ho hetsika ny fahalemena hita: iza no manao inona, miaraka amin'iza, rahoviana ary amin'ny vola ohatrinona. Arahina avy eo ny fandehanana ary averina ny fandrefesana rehefa afaka herintaona.</em></p></div>`;
+  // weaknesses
+  h+=`<div class="blk"><div class="blkh"><h3>Faiblesses à traiter en priorité<em class="mg">Fahalemena laharam-pahamehana</em></h3>`+
+     (weak.length?`<button type="button" data-act="addzero">Ajouter une action pour chaque faiblesse à 0<em class="mg">Hanampy hetsika isaky ny fahalemena 0</em></button>`:"")+`</div>`;
+  if(!weak.length)h+=`<div class="empty">Aucune faiblesse à 0 ou 33 pour le moment. Répondez d'abord aux indicateurs.<em class="mg">Tsy mbola misy fahalemena (0 na 33). Valio aloha ny famantarana.</em></div>`;
+  weak.forEach(function(o){
+    var v=sc(o.id),k=LV.indexOf(v),tq=o.t.split("|"),has=S.actions.some(function(a){return a.ind===o.id}),b=band(v);
+    h+=`<div class="wk"><span class="id">${o.id}</span><div><div>${tq[0]}<em class="mg">${tq[1]}</em></div><div class="ans"><i class="dot" style="background:${b[2]}"></i><b>${v}</b>${fr(o.lv[k])}</div></div>`+
+       `<button type="button" data-act="add" data-ind="${o.id}"${has?" disabled":""}>${has?"Planifiée · Voalahatra":"+ Action · Hetsika"}</button></div>`;
+  });
+  h+=`</div>`;
+  // actions
+  h+=`<div class="blk"><div class="blkh"><h3>Actions prévues<em class="mg">Hetsika voalahatra</em></h3></div>
+   <div class="stats" id="pl-stats"></div><div id="pl-cards"></div>
+   <div class="addrow"><button type="button" class="primary" data-act="addfree">+ Action libre<em class="mg">Hetsika afaka manoratra malalaka</em></button></div></div>`;
+  // follow-up
+  h+=`<div class="blk"><div class="blkh"><h3>Suivi et nouvelle mesure<em class="mg">Fanaraha-maso sy fandrefesana indray</em></h3></div><div class="follow">
+   ${fld("Groupe technique de suivi (6 à 9 personnes : noms et fonctions)|Vondrona teknika mpanaraka (olona 6 ka hatramin'ny 9: anarana sy andraikitra)",`<textarea id="plTeam" rows="3">${esc(S.team)}</textarea>`)}
+   ${fld("Date de la prochaine mesure (après environ 1 an)|Daty ny fandrefesana manaraka (rehefa afaka herintaona eo ho eo)",`<input type="date" id="plNext" value="${esc(S.next)}">`)}</div></div>`;
+  psec.innerHTML=h;
+  renderCards();
+  $("plTeam").oninput=function(e){S.team=e.target.value;save()};
+  $("plNext").oninput=function(e){S.next=e.target.value;save()};
+}
+function renderCards(){
+  var h="";
+  if(!S.actions.length)h=`<div class="empty">Aucune action pour le moment. Ajoutez-en une depuis une faiblesse ci-dessus, ou créez une action libre.<em class="mg">Mbola tsy misy hetsika. Manampia avy amin'ny fahalemena eo ambony, na mamoròna hetsika malalaka.</em></div>`;
+  S.actions.forEach(function(a){
+    var o=a.ind?oBy(a.ind):null,sg=a.ind?sugOf(a.ind):null,id=`data-aid="${a.id}"`;
+    var link=o?`<div class="alink"><b>${o.id}</b>${o.t.split("|")[0]}<em class="mg">${o.t.split("|")[1]}</em></div>`:`<div class="alink">Action libre · Hetsika malalaka</div>`;
+    h+=`<div class="acard" id="c-${a.id}"><div class="ahead"><div class="tt">${link}
+      <input type="text" ${id} data-f="title" value="${esc(a.title)}" placeholder="Action à mener · Hetsika tanterahina" aria-label="Action">
+      ${sg?`<div class="sg"><em class="mg" style="display:inline">${sg.split("|")[1]}</em></div>`:""}</div>
+      <button type="button" class="skip" data-act="del" ${id}>Supprimer · Fafao</button></div>
+     <div class="afields">
+      ${fld("Cause de la faiblesse|Antony ny fahalemena",`<textarea ${id} data-f="cause" rows="2">${esc(a.cause)}</textarea>`)}
+      ${fld("Résultat attendu|Vokatra andrasana",`<textarea ${id} data-f="result" rows="2">${esc(a.result)}</textarea>`)}
+      ${fld("Responsable|Tompon'andraikitra",`<input type="text" ${id} data-f="resp" value="${esc(a.resp)}">`)}
+      ${fld("Partenaires|Mpiara-miasa",`<input type="text" ${id} data-f="partners" value="${esc(a.partners)}">`)}
+      ${fld("Axe d'intervention|Sehatra fanatsaràna",`<select ${id} data-f="axis" data-n="1">${opts(AXES,a.axis)}</select>`,"wide")}
+     </div>
+     <div class="row3">
+      ${fld("Horizon|Faharetana",`<select ${id} data-f="horizon" data-n="1">${opts(HZ,a.horizon)}</select>`)}
+      ${fld("Échéance|Daty farany",`<input type="date" ${id} data-f="due" value="${esc(a.due)}">`)}
+      ${fld("Budget (Ar)|Teti-bola (Ar)",`<input type="number" min="0" step="10000" ${id} data-f="budget" value="${esc(a.budget)}" placeholder="0">`)}
+      ${fld("Priorité|Laharam-pahamehana",`<select ${id} data-f="prio" data-n="1">${opts(PR,a.prio)}</select>`)}
+      ${fld("Statut|Toetra",`<select ${id} data-f="status" data-n="1">${opts(ST,a.status)}</select>`)}
+     </div></div>`;
+  });
+  $("pl-cards").innerHTML=h;updateStats();
+}
+function updateStats(){
+  var t=planStats(),el=$("pl-stats");planNote();
+  if(!el)return;
+  el.innerHTML=`<div class="stat"><b>${t.n}</b><span>${bi("Actions|Hetsika")}</span></div>
+   <div class="stat"><b>${t.pct} %</b><span>${bi("Terminées|Vita")} (${t.done}/${t.n})</span><div class="pbar"><i style="width:${t.pct}%"></i></div></div>
+   <div class="stat"><b>${t.short} / ${t.long}</b><span>${bi("Court terme / long terme|Fohy / maharitra")}</span></div>
+   <div class="stat"><b>${money(t.bud)}</b><span>${bi("Budget total|Teti-bola rehetra")}</span></div>`;
+}
+psec.addEventListener("input",function(e){var el=e.target,id=el.getAttribute("data-aid");if(!id)return;
+  var a=S.actions.filter(function(x){return x.id===id})[0];if(!a)return;var f=el.getAttribute("data-f");
+  a[f]=el.getAttribute("data-n")?+el.value:el.value;a.ex=false;save();updateStats()});
+psec.addEventListener("click",function(e){
+  var b=e.target.closest("button[data-act]");if(!b)return;var act=b.getAttribute("data-act");
+  if(act==="add"){var i=b.getAttribute("data-ind");if(!S.actions.some(function(a){return a.ind===i})){S.actions.push(mkAction(i));save();renderPlan()}}
+  else if(act==="addzero"){planWeak().filter(function(o){return sc(o.id)===0&&!S.actions.some(function(a){return a.ind===o.id})}).forEach(function(o){S.actions.push(mkAction(o.id))});save();renderPlan()}
+  else if(act==="addfree"){S.actions.push(mkAction(""));save();renderPlan();var cs=document.querySelectorAll("#pl-cards .acard");var last=cs[cs.length-1];if(last){var inp=last.querySelector("input");if(inp)inp.focus()}}
+  else if(act==="del"){
+    if(!b.getAttribute("data-armed")){b.setAttribute("data-armed","1");b.innerHTML="Confirmer ? · Eny?";setTimeout(function(){if(b.isConnected){b.removeAttribute("data-armed");b.innerHTML="Supprimer · Fafao"}},3000)}
+    else{var id=b.getAttribute("data-aid");S.actions=S.actions.filter(function(a){return a.id!==id});save();renderPlan()}
+  }
+});
+function show(i){DATA.forEach(function(p,j){$("sec-"+p.id).hidden=j!==i;$("tab-"+p.id).setAttribute("aria-selected",j===i)});
+  $("sec-plan").hidden=i!=="plan";$("tab-plan").setAttribute("aria-selected",i==="plan");if(i==="plan")renderPlan()}
 function setScore(id,v){S.scores[id]=v;refresh();save()}
 ALL.forEach(function(o){
   o.lv.forEach(function(_,k){$("o-"+o.id+"-"+k).onchange=function(){setScore(o.id,LV[k])}});
@@ -669,7 +865,7 @@ function refresh(){
   $("oNum").textContent=fmt(o);
   $("oBand").innerHTML='<i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span>';
   $("oCov").textContent=done+" / "+tot+" indicateurs renseignés · navaly";
-  $("exbanner").hidden=!S.examples;
+  $("exbanner").hidden=!S.examples;planNote();
 }
 function summary(){
   var o=oScore(),l=["Baromètre des piliers de gouvernance","Entité : "+(S.entity||"(non renseignée)"),"Date : "+(S.date||"(non renseignée)"),"Score global : "+fmt(o)+"/100 ("+fr(band(o)[1])+")",""];
@@ -683,14 +879,13 @@ $("copy").onclick=function(){
 };
 $("reset").onclick=function(){$("confirm").hidden=false};
 $("no").onclick=function(){$("confirm").hidden=true};
-function wipe(){S.scores={};S.examples=false;syncInputs();refresh();save()}
-$("yes").onclick=function(){$("confirm").hidden=true;wipe()};
-$("clearEx").onclick=wipe;
+function wipe(all){S.scores={};S.examples=false;S.actions=all?[]:S.actions.filter(function(a){return !a.ex});if(all){S.team="";S.next=""}syncInputs();refresh();save();if(!$("sec-plan").hidden)renderPlan()}
+$("yes").onclick=function(){$("confirm").hidden=true;wipe(true)};
+$("clearEx").onclick=function(){wipe(false)};
 $("entity").value=S.entity||"";$("adate").value=S.date||"";
 $("entity").oninput=function(e){S.entity=e.target.value;save()};
 $("adate").oninput=function(e){S.date=e.target.value;save()};
 
-function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function buildReport(){
   var o=oScore(),ob=band(o),tot=ALL.length,done=ALL.filter(function(x){return sc(x.id)!=null}).length;
   var h='<header class="rp-head"><div class="rp-kick">Rapport d\'évaluation · Tatitra fanombanana</div>'+
@@ -722,6 +917,23 @@ function buildReport(){
     });
     h+='</section>';
   });
+
+  // action plan
+  var acts=S.actions.slice().sort(function(x,y){return x.prio-y.prio||x.horizon-y.horizon}),ps=planStats();
+  h+='<section class="rp-pillar"><h2>Plan d\'action de changement<em class="mg">Drafitra hetsika fanovana</em></h2>';
+  h+='<div class="rp-stats"><div><b>'+ps.n+'</b>Actions · Hetsika</div><div><b>'+ps.pct+' %</b>Terminées · Vita</div><div><b>'+ps.short+' / '+ps.long+'</b>Court / long terme</div><div><b>'+money(ps.bud)+'</b>Budget total</div></div>';
+  if(!acts.length){h+='<p class="rp-na">Aucune action enregistrée.<em class="mg">Tsy misy hetsika voasoratra.</em></p>'}
+  else{
+    h+='<table class="rp-t rp-plan"><thead><tr><th>#</th><th>Action · Hetsika</th><th>Résultat attendu · Vokatra</th><th>Qui · Iza</th><th>Quand · Rahoviana</th></tr></thead><tbody>';
+    acts.forEach(function(a,i){
+      var o=a.ind?oBy(a.ind):null,ax=AXES[a.axis].split("|"),st=ST[a.status].split("|"),pr=PR[a.prio].split("|"),hz=HZ[a.horizon].split("|");
+      h+='<tr><td class="n">'+(i+1)+'</td><td><b>'+esc(a.title||"—")+'</b>'+(a.cause?'<br>Cause : '+esc(a.cause):'')+'<br><span class="tag">'+(o?o.id+' · ':'')+ax[0]+' · '+pr[0]+'</span></td>'+
+        '<td>'+esc(a.result||"—")+'</td><td class="who">'+esc(a.resp||"—")+(a.partners?'<br><span class="tag">avec '+esc(a.partners)+'</span>':'')+'</td>'+
+        '<td class="when">'+esc(a.due||"—")+'<br><span class="tag">'+hz[0]+'</span><br>'+money(a.budget)+'<br><b>'+st[0]+'</b> <span class="mg" style="display:inline">'+st[1]+'</span></td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  h+='<div class="rp-foot"><div><b>Groupe technique de suivi · Vondrona teknika mpanaraka :</b> '+esc(S.team||"—").replace(/\n/g,"<br>")+'</div><div style="margin-top:4pt"><b>Prochaine mesure · Fandrefesana manaraka :</b> '+esc(S.next||"—")+'</div></div></section>';
   h+='<div class="rp-foot"><div>Sources du cadre : Guide du Good Governance Barometer (FHI 360 / USAID, 2015) ; Brillantes (2001) ; Manasan, Gonzales et Gaffud (1999). Les niveaux de réponse sont une première version à valider avec chaque communauté.</div>'+
     '<div class="rp-sign"><div>Animateur / facilitateur<em class="mg">Mpanampy</em></div><div>Représentant de la commune<em class="mg">Solontenan\'ny kaominina</em></div><div>Représentant de la société civile<em class="mg">Solontenan\'ny fiarahamonina sivily</em></div></div></div>';
   $("report").innerHTML=h;

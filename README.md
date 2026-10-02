@@ -10,7 +10,8 @@ Une seule page HTML, sans serveur ni installation.
 - 22 sous-critères et 68 indicateurs
 - Chaque indicateur est une question à choix multiple à 4 niveaux (0, 33, 67, 100 points)
 - Calcul automatique : sous-critère → pilier → score global (sur 100)
-- Bouton **Imprimer / PDF** : génère un rapport A4 (résumé, détail par pilier, zones de signature)
+- Onglet **Plan d'action** : les faiblesses (réponses à 0 ou 33) alimentent des actions avec cause, résultat attendu, responsable, partenaires, axe d'intervention, horizon, échéance, budget (Ar), priorité et statut ; suivi de l'avancement ; groupe technique de suivi et date de la prochaine mesure
+- Bouton **Imprimer / PDF** : génère un rapport A4 (résumé, détail par pilier, plan d'action, zones de signature)
 - Les réponses restent dans le navigateur de l'utilisateur (localStorage), rien n'est envoyé en ligne
 
 ## Utiliser
