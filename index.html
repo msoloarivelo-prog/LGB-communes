@@ -94,7 +94,8 @@ button:hover{border-color:var(--accent)}
 .hmid .ho{margin-top:12px;display:inline-flex;align-items:baseline;gap:8px;font:600 .95rem var(--f-data)}
 .hmid .ho b{font:700 2.4rem 'Josefin Sans',sans-serif}
 @media (max-width:760px){.hub{padding:20px 12px}.hub-frame{padding:0 10px}.hub-row.r2,.hub-row.r3{grid-template-columns:minmax(0,1fr)}.hcard{min-height:130px}.hub-frame::before{top:10%;bottom:10%}}
-.side{position:static!important}
+[hidden]{display:none!important}
+.actions{background:none!important;border:0!important;padding:0!important;flex-direction:row!important;position:static!important}
 .cta{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px}
 .cta figure{margin:0;text-align:center}.cta svg{width:210px;height:210px;display:block;margin:0 auto}
 .cta .rp-pill{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:999px;background:#1B2B3A;color:#fff;font:600 12px var(--f-body);letter-spacing:.04em}
@@ -290,39 +291,11 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
     <button type="button" id="clearEx" class="primary">Effacer les exemples<em class="mg">Hamafa ny ohatra</em></button>
   </div>
 
-  <section class="hub" id="hub" aria-label="Piliers de la gouvernance"><div class="hub-frame">
-    <div class="hub-row r2" id="hub-top"></div>
-    <div class="hmid" id="hub-mid"></div>
-    <div class="hub-row r3" id="hub-bot"></div>
-  </div></section>
-
-  <div class="grid">
-    <aside class="side" aria-label="Résultat global">
-      <div>
-        <div class="overall"><span class="num" id="oNum">–</span><span class="pct">/100</span></div>
-        <div class="band" id="oBand"></div>
-        <div class="cov" id="oCov"></div>
-        <div class="cov" id="oPlan"></div>
-      </div>
-      <div class="pbars" id="pbars"></div>
-      <div class="legend" id="legend" aria-label="Échelle"></div>
-      <div class="row">
-        <button type="button" id="copy"><span id="copyT">Copier le résumé</span><em class="mg" id="copyM">Adikao ny famintinana</em></button>
-        <button type="button" id="reset">Tout effacer<em class="mg">Fafana daholo</em></button>
-        <button type="button" id="print" class="primary">Imprimer / PDF<em class="mg">Hanonta / PDF</em></button>
-      </div>
-      <div id="confirm" hidden class="row">
-        <span style="font-size:13px">Effacer toutes les réponses ?<em class="mg">Fafana ve ny valiny rehetra?</em></span>
-        <button type="button" id="yes" class="primary">Oui, effacer<em class="mg">Eny, fafao</em></button>
-        <button type="button" id="no">Annuler<em class="mg">Ajanony</em></button>
-      </div>
-      <textarea id="fallback" hidden readonly aria-label="Résumé"></textarea>
-    </aside>
-
-    <section class="cta" id="cta">
+  <section class="cta" id="cta">
       <figure id="ctaG"></figure>
       <div class="ctat">
         <h2>Évaluation<em class="mg">Fanombanana</em></h2>
+        <div class="band" id="ctaB"></div>
         <p id="ctaP"></p>
         <div class="row">
           <button type="button" id="go" class="primary"><span id="goT">Commencer l'évaluation</span><em class="mg" id="goM">Hanomboka ny fanombanana</em></button>
@@ -330,7 +303,27 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
         </div>
       </div>
     </section>
+
+  <section class="hub" id="hub" aria-label="Piliers de la gouvernance"><div class="hub-frame">
+    <div class="hub-row r2" id="hub-top"></div>
+    <div class="hmid" id="hub-mid"></div>
+    <div class="hub-row r3" id="hub-bot"></div>
+  </div></section>
+
+  <div class="actions side">
+      <div class="row">
+      <button type="button" id="copy"><span id="copyT">Copier le résumé</span><em class="mg" id="copyM">Adikao ny famintinana</em></button>
+      <button type="button" id="reset">Tout effacer<em class="mg">Fafana daholo</em></button>
+      <button type="button" id="print" class="primary">Imprimer / PDF<em class="mg">Hanonta / PDF</em></button>
+    </div>
+    <div id="confirm" hidden class="row">
+      <span style="font-size:13px">Effacer toutes les réponses ?<em class="mg">Fafana ve ny valiny rehetra?</em></span>
+      <button type="button" id="yes" class="primary">Oui, effacer<em class="mg">Eny, fafao</em></button>
+      <button type="button" id="no">Annuler<em class="mg">Ajanony</em></button>
+    </div>
+    <textarea id="fallback" hidden readonly aria-label="Résumé"></textarea>
   </div>
+
   </div>
 
   <div id="pg-tool" hidden>
@@ -787,13 +780,9 @@ var DOTC=["var(--b1)","var(--b2)","var(--b4)","var(--b5)"];
 
 // legend
 var LG=[["0–20","var(--b1)",BN[0]],["21–40","var(--b2)",BN[1]],["41–60","var(--b3)",BN[2]],["61–80","var(--b4)",BN[3]],["81–100","var(--b5)",BN[4]]];
-$("legend").innerHTML=LG.map(function(g){var a=g[2].split("|");return '<span><i class="dot" style="background:'+g[1]+'"></i><b>'+g[0]+'</b>'+a[0]+'<em>'+a[1]+'</em></span>'}).join("");
 
-var pb=$("pbars"),tabs=$("tabs"),pil=$("pillars");
+var tabs=$("tabs"),pil=$("pillars");
 DATA.forEach(function(p,i){
-  var d=document.createElement("div");d.className="pb";
-  d.innerHTML='<div class="l"><span>'+bi(p.name)+'</span><span id="pv-'+p.id+'">–</span></div><div class="track"><i id="pf-'+p.id+'"></i><b style="left:20%"></b><b style="left:40%"></b><b style="left:60%"></b><b style="left:80%"></b></div>';
-  pb.appendChild(d);
   var t=document.createElement("button");t.type="button";t.className="tab";t.id="tab-"+p.id;t.setAttribute("role","tab");
   t.innerHTML='<span class="nm">'+bi(p.name)+'</span><span class="v" id="tv-'+p.id+'">–</span>';
   t.onclick=function(){show(i)};tabs.appendChild(t);
@@ -835,8 +824,7 @@ function planStats(){
   var bud=a.reduce(function(t,x){return t+(+x.budget||0)},0);
   return {n:n,done:done,run:run,pct:n?Math.round(done*100/n):0,bud:bud,short:a.filter(function(x){return x.horizon===0}).length,long:a.filter(function(x){return x.horizon===1}).length};
 }
-function planNote(){var t=planStats();$("tv-plan").textContent=t.n;
-  $("oPlan").textContent=t.n?("Plan d'action : "+t.n+" action"+(t.n>1?"s":"")+" · "+t.pct+" % terminées · Hetsika "+t.n):"Plan d'action : aucune action · Tsy misy hetsika"}
+function planNote(){var t=planStats();$("tv-plan").textContent=t.n;}
 function opts(list,cur){return list.map(function(o,i){var t=o.split("|");return `<option value="${i}"${cur===i?" selected":""}>${t[0]} · ${t[1]}</option>`}).join("")}
 function fld(label,inner,cls){return `<label class="f ${cls||""}"><span>${bi(label)}</span>${inner}</label>`}
 function planWeak(){
@@ -941,9 +929,8 @@ function refresh(){
   ALL.forEach(function(o){tot++;var v=sc(o.id);if(v!=null)done++;$("sk-"+o.id).hidden=(v==null)});
   DATA.forEach(function(p){
     var v=pScore(p),b=band(v);
-    $("pv-"+p.id).textContent=fmt(v);$("tv-"+p.id).textContent=fmt(v);
+    $("tv-"+p.id).textContent=fmt(v);
     $("hv-"+p.id).textContent=fmt(v);$("hl-"+p.id).textContent=fr(b[1]);$("hi-"+p.id).style.setProperty("background",b[2]);$("hc-"+p.id).style.setProperty("--hc",b[2]);
-    var f=$("pf-"+p.id);f.style.width=(v==null?0:v)+"%";f.style.background=b[2];
     p.subs.forEach(function(s){var sv=subScore(s),sb=band(sv);$("sv-"+s.id).textContent=fmt(sv);$("sd-"+s.id).style.background=sb[2]});
   });
   var o=oScore(),ob=band(o);
@@ -951,9 +938,8 @@ function refresh(){
   $("tNum").textContent=fmt(o);$("tBand").textContent=fr(ob[1]);$("tProg").textContent=done+" / "+tot+" indicateurs";$("tEnt").textContent=$("entity").value||"—";
   $("ctaP").textContent=done+" / "+tot+" indicateurs renseignés · "+planStats().n+" actions au plan.";
   $("goT").textContent=done>0?"Reprendre l'évaluation":"Commencer l'évaluation";$("goM").textContent=done>0?"Hanohy ny fanombanana":"Hanomboka ny fanombanana";
-  $("oNum").textContent=fmt(o);$("hov").textContent=fmt(o);$("hol").textContent=fr(ob[1]);
-  $("oBand").innerHTML='<i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span>';
-  $("oCov").textContent=done+" / "+tot+" indicateurs renseignés · navaly";
+  $("hov").textContent=fmt(o);$("hol").textContent=fr(ob[1]);
+  $("ctaB").innerHTML='<i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span>';
   $("exbanner").hidden=!S.examples;planNote();
 }
 function summary(){
