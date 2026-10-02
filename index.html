@@ -99,9 +99,13 @@ button:hover{border-color:var(--accent)}
 @media (max-width:980px) and (min-width:861px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:700px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:440px){.opts{grid-template-columns:minmax(0,1fr)}}
-.opt{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:8px;padding:9px 10px 9px 13px;cursor:pointer;background:var(--surface);font-size:13.5px;line-height:1.4;min-width:0}
+.opt{position:relative;display:flex;flex-direction:column;justify-content:flex-start;gap:8px;border:1px solid var(--line);border-radius:8px;padding:9px 10px 9px 13px;cursor:pointer;background:var(--surface);font-size:13.5px;line-height:1.4;min-width:0}
 .opt::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:0 3px 3px 0;background:var(--c)}
-.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .top{display:flex;align-items:center;gap:8px}
+.opt input{appearance:none;-webkit-appearance:none;flex:none;width:18px;height:18px;margin:0;border:2px solid var(--c);border-radius:50%;background:var(--surface);cursor:pointer;display:grid;place-content:center}
+.opt input::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--c);transform:scale(0);transition:transform .12s}
+.opt input:checked::after{transform:scale(1)}
+.opt .top .sc{margin-left:auto}
 .opt .sc{font:500 11px var(--f-data);color:var(--muted)}
 .opt:hover{border-color:var(--accent)}
 .opt:has(input:checked){border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
@@ -732,7 +736,7 @@ DATA.forEach(function(p,i){
       var tq=o.t.split("|");
       h+='<div class="ind" id="r-'+o.id+'" role="radiogroup" aria-labelledby="q-'+o.id+'"><p class="q" id="q-'+o.id+'"><span>'+tq[0]+'<span class="src '+o.src+'">'+o.src+'</span><em class="mg">'+tq[1]+'</em></span><button type="button" class="skip" id="sk-'+o.id+'" title="Effacer la réponse · Fafao ny valiny">Effacer · Fafao</button></p><div class="opts">';
       o.lv.forEach(function(txt,k){
-        h+='<label class="opt" style="--c:'+DOTC[k]+'"><input type="radio" name="n-'+o.id+'" value="'+LV[k]+'" id="o-'+o.id+'-'+k+'"><span>'+bi(txt)+'</span><span class="sc">'+LV[k]+' pts</span></label>';
+        h+='<label class="opt" style="--c:'+DOTC[k]+'"><span class="top"><input type="radio" name="n-'+o.id+'" value="'+LV[k]+'" id="o-'+o.id+'-'+k+'"><span class="sc">'+LV[k]+' pts</span></span><span>'+bi(txt)+'</span></label>';
       });
       h+='</div></div>';
     });
