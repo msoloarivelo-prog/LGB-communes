@@ -186,6 +186,15 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
   .rp-meta dd{margin:2pt 0 0;font-weight:600;font-size:11pt}
   .rp-ex{margin:10pt 0 0;padding:6pt 9pt;border:1pt dashed var(--b2);font-size:9pt}
   .rp-overall{display:flex;align-items:center;gap:16pt;margin:14pt 0 8pt}
+  .rp-g{margin:0;text-align:center;break-inside:avoid}
+  .rp-g svg{display:block;margin:0 auto}
+  .rp-pill{display:inline-block;white-space:nowrap;margin-top:6pt;padding:3pt 12pt;border-radius:999px;background:#1B2B3A;color:#fff;font:600 8.5pt var(--f-body);letter-spacing:.04em}
+  .rp-pill .mg{color:#C9D4DB;font-size:7pt;display:block;letter-spacing:0}
+  .rp-gs{display:grid;grid-template-columns:repeat(5,1fr);gap:6pt;margin:6pt 0 14pt}
+  .rp-gs svg{width:100%;height:auto}
+  .rp-overall .rp-g svg{width:120pt;height:120pt}
+  .rp-ph{display:flex;gap:16pt;align-items:center;margin-bottom:6pt}
+  .rp-ph .rp-g svg{width:86pt;height:86pt}
   .rp-big{font-family:var(--f-display)}
   .rp-big b{font-size:46pt;line-height:1;font-weight:700}
   .rp-big span{font:500 14pt var(--f-data);color:var(--muted);margin-left:3pt}
@@ -200,7 +209,7 @@ select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outl
   table.rp-t .b{width:110pt}
   table.rp-t .ans{width:36%}
   table.rp-t .mg{font-size:8.5pt}
-  .rp-sum td{padding:7pt 6pt}
+  .rp-sum td{padding:3.5pt 6pt}
   .rp-pillar{break-before:page}
   .rp-pillar h2{font-size:17pt;margin:0}
   .rp-pillar h2 .mg{font:italic 400 10pt var(--f-body)}
@@ -890,6 +899,16 @@ $("entity").value=S.entity||"";$("adate").value=S.date||"";
 $("entity").oninput=function(e){S.entity=e.target.value;save()};
 $("adate").oninput=function(e){S.date=e.target.value;save()};
 
+function gauge(v,size,cap){
+  var N=40,R1=0.70,R2=0.97,c=size/2,f=v==null?0:Math.round(v/100*N),b=band(v),col=b[2],sw=size*0.026,o="";
+  for(var i=0;i<N;i++){var a=(-90+i*360/N)*Math.PI/180,x1=c+Math.cos(a)*c*R1,y1=c+Math.sin(a)*c*R1,x2=c+Math.cos(a)*c*R2,y2=c+Math.sin(a)*c*R2,on=i<f;
+    o+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="'+(on?col:"#D5DDE0")+'" stroke-opacity="'+(on?(0.4+0.6*(i+1)/Math.max(f,1)).toFixed(2):1)+'" stroke-width="'+sw.toFixed(1)+'" stroke-linecap="round"/>'}
+  var fs=size*0.27;
+  o+='<text x="'+c+'" y="'+(c+fs*0.12)+'" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-weight="600" font-size="'+fs.toFixed(0)+'" fill="'+col+'">'+fmt(v)+'</text>'+
+     '<line x1="'+(c-size*0.17)+'" x2="'+(c+size*0.17)+'" y1="'+(c+fs*0.38)+'" y2="'+(c+fs*0.38)+'" stroke="#9AA7A3" stroke-width="1"/>'+
+     '<text x="'+c+'" y="'+(c+fs*0.38+size*0.1)+'" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="'+(size*0.075).toFixed(0)+'" fill="#6B7A76">/ 100</text>';
+  return '<figure class="rp-g"><svg viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="'+fmt(v)+'/100">'+o+'</svg><figcaption class="rp-pill">'+cap+'</figcaption></figure>';
+}
 function buildReport(){
   var o=oScore(),ob=band(o),tot=ALL.length,done=ALL.filter(function(x){return sc(x.id)!=null}).length;
   var h='<header class="rp-head"><div class="rp-kick">Rapport d\'évaluation · Tatitra fanombanana</div>'+
@@ -899,15 +918,18 @@ function buildReport(){
     '<div><dt>Renseignés · Navaly</dt><dd>'+done+' / '+tot+'</dd></div></dl>'+
     (S.examples?'<div class="rp-ex">Réponses d\'exemple, ne pas utiliser comme résultat réel.<em class="mg">Valiny ohatra, tsy azo ampiasaina ho vokatra marina.</em></div>':'')+
     '</header>';
-  h+='<section class="rp-overall"><div class="rp-big"><b>'+fmt(o)+'</b><span>/100</span></div><div class="rp-bnd"><i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span></div></section>';
-  h+='<table class="rp-t rp-sum"><thead><tr><th>Pilier · Andry</th><th class="b"></th><th class="s">Score</th><th>Niveau · Haavo</th></tr></thead><tbody>';
+  h+='<section class="rp-overall">'+gauge(o,190,"Score global")+'<div class="rp-bnd"><i class="dot" style="background:'+ob[2]+'"></i><span>'+bi(ob[1])+'</span></div></section>';
+  h+='<div class="rp-gs">';
+  DATA.forEach(function(p){var v=pScore(p);h+=gauge(v,120,fr(p.name))});
+  h+='</div>';
+  h+='<table class="rp-t rp-sum"><thead><tr><th>Pilier · Andry</th><th class="s">Score</th><th>Niveau · Haavo</th></tr></thead><tbody>';
   DATA.forEach(function(p){var v=pScore(p),b=band(v);
-    h+='<tr><td>'+bi(p.name)+'</td><td class="b"><div class="rp-bar"><i style="width:'+(v==null?0:v)+'%;background:'+b[2]+'"></i></div></td><td class="s">'+fmt(v)+'</td><td>'+bi(b[1])+'</td></tr>'});
+    h+='<tr><td>'+bi(p.name)+'</td><td class="s">'+fmt(v)+'</td><td><i class="dot" style="background:'+b[2]+'"></i> '+bi(b[1])+'</td></tr>'});
   h+='</tbody></table>';
   h+='<div class="rp-foot"><div>Échelle : 0–20 Critique · 21–40 Faible · 41–60 Moyen · 61–80 Bon · 81–100 Très bon. Les quatre réponses de chaque indicateur valent 0, 33, 67 et 100 points. Sous-critère = moyenne de ses indicateurs renseignés ; pilier = moyenne de ses sous-critères ; score global = moyenne des cinq piliers.<em class="mg">Fenitra: 0–20 Ratsy be · 21–40 Malemy · 41–60 Antonony · 61–80 Tsara · 81–100 Tsara be. Ny valiny efatra isaky ny famantarana dia mitentina 0, 33, 67 ary 100.</em></div></div>';
   DATA.forEach(function(p){
     var nm=p.name.split("|"),ds=p.desc.split("|");
-    h+='<section class="rp-pillar"><h2>'+nm[0]+' · '+fmt(pScore(p))+'/100<em class="mg">'+nm[1]+'</em></h2><p>'+ds[0]+'<em class="mg">'+ds[1]+'</em></p>';
+    h+='<section class="rp-pillar"><div class="rp-ph">'+gauge(pScore(p),110,fr(band(pScore(p))[1]))+'<div><h2>'+nm[0]+'<em class="mg">'+nm[1]+'</em></h2><p>'+ds[0]+'<em class="mg">'+ds[1]+'</em></p></div></div><p style="display:none">'+ds[0]+'<em class="mg">'+ds[1]+'</em></p>';
     p.subs.forEach(function(s){
       var sv=subScore(s),sb=band(sv),sn=s.name.split("|");
       h+='<div class="rp-sub"><div class="rp-subh"><span><small>'+s.id+'</small>'+sn[0]+'</span><span class="sc"><i class="dot" style="background:'+sb[2]+'"></i>'+fmt(sv)+'/100</span></div>'+
